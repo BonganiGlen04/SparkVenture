@@ -1,6 +1,13 @@
+
 using Microsoft.AspNetCore.Identity;
+using SparkVenture.Data.Models;
+using SparkVenture.Models;
+using System.Collections.Generic;
+
 namespace SparkVenture.Data;
-// Add profile data for application users by adding properties to the ApplicationUser class
-public class ApplicationUser : IdentityUser
+
+public class ApplicationUser : IdentityUser<Guid>
 {
+    public ICollection<BusinessMember> BusinessMemberships { get; set; }
+        = new List<BusinessMember>();
 }
