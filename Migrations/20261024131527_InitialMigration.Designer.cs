@@ -12,7 +12,7 @@ using SparkVenture.Data;
 namespace SparkVenture.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261024115345_InitialMigration")]
+    [Migration("20261024131527_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -351,7 +351,9 @@ namespace SparkVenture.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("RowVersion")
-                        .HasColumnType("varbinary(max)");
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<Guid?>("SectorId")
                         .HasColumnType("uniqueidentifier");
@@ -453,14 +455,18 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.BusinessDocument", b =>
                 {
-                    b.Property<Guid>("BusinessId")
+                    b.Property<Guid>("BusinessDocumentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DocumentPurpose")
                         .IsRequired()
@@ -469,9 +475,12 @@ namespace SparkVenture.Migrations
                     b.Property<bool>("IsPrimary")
                         .HasColumnType("bit");
 
-                    b.HasKey("BusinessId", "DocumentId");
+                    b.HasKey("BusinessDocumentId");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("BusinessId", "DocumentId")
+                        .IsUnique();
 
                     b.ToTable("BusinessDocuments");
                 });
@@ -646,7 +655,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.HasKey("BusinessSignalId");
 
@@ -662,7 +672,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
@@ -730,27 +741,34 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.CashbookEntryDocument", b =>
                 {
-                    b.Property<Guid>("CashbookEntryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("CashbookEntryDocumentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CashbookEntryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DocumentPurpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CashbookEntryId", "DocumentId");
+                    b.HasKey("CashbookEntryDocumentId");
 
                     b.HasIndex("BusinessId");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("CashbookEntryId", "DocumentId")
+                        .IsUnique();
 
                     b.ToTable("CashbookEntryDocuments");
                 });
@@ -807,7 +825,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("AvgDaysToPay")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
@@ -824,7 +843,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("LateInvoiceRate")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -1007,7 +1027,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("RequestedAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1028,10 +1049,8 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.FundingApplicationDocument", b =>
                 {
-                    b.Property<Guid>("FundingApplicationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("FundingApplicationDocumentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusinessId")
@@ -1040,18 +1059,27 @@ namespace SparkVenture.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("DocumentPurpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("FundingApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsRequiredEvidence")
                         .HasColumnType("bit");
 
-                    b.HasKey("FundingApplicationId", "DocumentId");
+                    b.HasKey("FundingApplicationDocumentId");
 
                     b.HasIndex("BusinessId");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("FundingApplicationId", "DocumentId")
+                        .IsUnique();
 
                     b.ToTable("FundingApplicationDocuments");
                 });
@@ -1102,7 +1130,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Score")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.HasKey("FundingReadinessAnswerId");
 
@@ -1133,7 +1162,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("OverallScore")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1155,7 +1185,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AmountPaid")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
@@ -1181,20 +1212,25 @@ namespace SparkVenture.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("RowVersion")
-                        .HasColumnType("varbinary(max)");
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<decimal>("TaxAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.HasKey("InvoiceId");
 
@@ -1207,10 +1243,8 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.InvoiceDocument", b =>
                 {
-                    b.Property<Guid>("InvoiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("InvoiceDocumentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusinessId")
@@ -1219,15 +1253,24 @@ namespace SparkVenture.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("DocumentPurpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("InvoiceId", "DocumentId");
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("InvoiceDocumentId");
 
                     b.HasIndex("BusinessId");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("InvoiceId", "DocumentId")
+                        .IsUnique();
 
                     b.ToTable("InvoiceDocuments");
                 });
@@ -1249,13 +1292,16 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("LineTotal")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.HasKey("InvoiceLineId");
 
@@ -1266,11 +1312,11 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.InvoiceNumberSequence", b =>
                 {
-                    b.Property<Guid>("BusinessId")
+                    b.Property<Guid>("InvoiceNumberSequenceId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BusinessId1")
+                    b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("NextNumber")
@@ -1281,11 +1327,14 @@ namespace SparkVenture.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("RowVersion")
-                        .HasColumnType("varbinary(max)");
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
-                    b.HasKey("BusinessId");
+                    b.HasKey("InvoiceNumberSequenceId");
 
-                    b.HasIndex("BusinessId1");
+                    b.HasIndex("BusinessId")
+                        .IsUnique();
 
                     b.ToTable("InvoiceNumberSequences");
                 });
@@ -1496,7 +1545,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.HasKey("OpportunityMatchId");
 
@@ -1579,7 +1629,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AllocatedAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("AllocationStatus")
                         .IsRequired()
@@ -1618,7 +1669,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
 
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
@@ -1887,10 +1939,8 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.RegistrationApplicationDocument", b =>
                 {
-                    b.Property<Guid>("RegistrationApplicationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("RegistrationApplicationDocumentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusinessId")
@@ -1899,6 +1949,9 @@ namespace SparkVenture.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("DocumentPurpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1906,11 +1959,17 @@ namespace SparkVenture.Migrations
                     b.Property<bool>("IsRequiredEvidence")
                         .HasColumnType("bit");
 
-                    b.HasKey("RegistrationApplicationId", "DocumentId");
+                    b.Property<Guid>("RegistrationApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RegistrationApplicationDocumentId");
 
                     b.HasIndex("BusinessId");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("RegistrationApplicationId", "DocumentId")
+                        .IsUnique();
 
                     b.ToTable("RegistrationApplicationDocuments");
                 });
@@ -2077,7 +2136,8 @@ namespace SparkVenture.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("SharePercentage")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
 
                     b.Property<string>("ShareholderType")
                         .IsRequired()
@@ -2214,10 +2274,8 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.TenderApplicationDocument", b =>
                 {
-                    b.Property<Guid>("TenderApplicationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("TenderApplicationDocumentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BusinessId")
@@ -2226,6 +2284,9 @@ namespace SparkVenture.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("DocumentPurpose")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -2233,11 +2294,17 @@ namespace SparkVenture.Migrations
                     b.Property<bool>("IsRequiredEvidence")
                         .HasColumnType("bit");
 
-                    b.HasKey("TenderApplicationId", "DocumentId");
+                    b.Property<Guid>("TenderApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TenderApplicationDocumentId");
 
                     b.HasIndex("BusinessId");
 
                     b.HasIndex("DocumentId");
+
+                    b.HasIndex("TenderApplicationId", "DocumentId")
+                        .IsUnique();
 
                     b.ToTable("TenderApplicationDocuments");
                 });
@@ -2275,7 +2342,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -2284,7 +2351,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -2293,7 +2360,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -2302,13 +2369,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -2317,7 +2384,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -2325,11 +2392,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "ActorUser")
                         .WithMany()
-                        .HasForeignKey("ActorUserId");
+                        .HasForeignKey("ActorUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("ActorUser");
 
@@ -2341,12 +2410,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Sector", "Sector")
                         .WithMany("Businesses")
-                        .HasForeignKey("SectorId");
+                        .HasForeignKey("SectorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("CreatedByUser");
 
@@ -2358,7 +2428,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Addresses")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2369,12 +2439,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Credentials")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "EvidenceDocument")
                         .WithMany()
-                        .HasForeignKey("EvidenceDocumentId");
+                        .HasForeignKey("EvidenceDocumentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
 
@@ -2386,13 +2457,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2405,7 +2476,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Insights")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2416,12 +2487,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Invitations")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "InvitedByUser")
                         .WithMany()
-                        .HasForeignKey("InvitedByUserId");
+                        .HasForeignKey("InvitedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
 
@@ -2433,7 +2505,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("MarketLinks")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2443,22 +2515,24 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.ApplicationUser", null)
                         .WithMany("BusinessMemberships")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Members")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "InvitedByUser")
                         .WithMany()
-                        .HasForeignKey("InvitedByUserId");
+                        .HasForeignKey("InvitedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
                         .WithMany("BusinessMemberships")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2473,7 +2547,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Signals")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2484,34 +2558,39 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("CashbookEntries")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Customer", "Customer")
                         .WithMany("CashbookEntries")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ExpenseCategory", "ExpenseCategory")
                         .WithMany()
-                        .HasForeignKey("ExpenseCategoryId");
+                        .HasForeignKey("ExpenseCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Invoice", "Invoice")
                         .WithMany("CashbookEntries")
-                        .HasForeignKey("InvoiceId");
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.PaymentAllocation", "PaymentAllocation")
                         .WithMany()
-                        .HasForeignKey("PaymentAllocationId");
+                        .HasForeignKey("PaymentAllocationId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.CashbookEntry", "ReversesCashbookEntry")
                         .WithMany()
-                        .HasForeignKey("ReversesCashbookEntryId");
+                        .HasForeignKey("ReversesCashbookEntryId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
 
@@ -2533,19 +2612,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.CashbookEntry", "CashbookEntry")
                         .WithMany("Documents")
                         .HasForeignKey("CashbookEntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2559,20 +2638,23 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "ActorUser")
                         .WithMany()
-                        .HasForeignKey("ActorUserId");
+                        .HasForeignKey("ActorUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.PrivacyNoticeVersion", "PrivacyNoticeVersion")
                         .WithMany()
-                        .HasForeignKey("PrivacyNoticeVersionId");
+                        .HasForeignKey("PrivacyNoticeVersionId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ActorUser");
@@ -2589,7 +2671,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Customers")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2599,11 +2681,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssignedToUser")
                         .WithMany()
-                        .HasForeignKey("AssignedToUserId");
+                        .HasForeignKey("AssignedToUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "RequesterUser")
                         .WithMany()
-                        .HasForeignKey("RequesterUserId");
+                        .HasForeignKey("RequesterUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("AssignedToUser");
 
@@ -2614,12 +2698,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "UploadedByUser")
                         .WithMany()
                         .HasForeignKey("UploadedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2631,7 +2716,8 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
                 });
@@ -2641,22 +2727,24 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("FundingApplications")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.FundingProvider", "FundingProvider")
                         .WithMany("Applications")
-                        .HasForeignKey("FundingProviderId");
+                        .HasForeignKey("FundingProviderId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Opportunity", "Opportunity")
                         .WithMany()
-                        .HasForeignKey("OpportunityId");
+                        .HasForeignKey("OpportunityId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
 
@@ -2672,19 +2760,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.FundingApplication", "FundingApplication")
                         .WithMany("Documents")
                         .HasForeignKey("FundingApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2698,12 +2786,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.Document", "EvidenceDocument")
                         .WithMany()
-                        .HasForeignKey("EvidenceDocumentId");
+                        .HasForeignKey("EvidenceDocumentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.FundingReadinessAssessment", "Assessment")
                         .WithMany("Answers")
                         .HasForeignKey("FundingReadinessAssessmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Assessment");
@@ -2715,12 +2804,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssessedByUser")
                         .WithMany()
-                        .HasForeignKey("AssessedByUserId");
+                        .HasForeignKey("AssessedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("AssessedByUser");
@@ -2733,13 +2823,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Invoices")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Customer", "Customer")
                         .WithMany("Invoices")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2752,19 +2842,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Invoice", "Invoice")
                         .WithMany()
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2779,7 +2869,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Invoice", "Invoice")
                         .WithMany("Lines")
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -2789,8 +2879,8 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2800,16 +2890,18 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
-                        .HasForeignKey("BusinessId");
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.NotificationTemplate", "Template")
                         .WithMany()
-                        .HasForeignKey("NotificationTemplateId");
+                        .HasForeignKey("NotificationTemplateId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2824,7 +2916,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -2834,11 +2926,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.OpportunitySource", "Source")
                         .WithMany("Opportunities")
-                        .HasForeignKey("OpportunitySourceId");
+                        .HasForeignKey("OpportunitySourceId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Sector", "Sector")
                         .WithMany("Opportunities")
-                        .HasForeignKey("SectorId");
+                        .HasForeignKey("SectorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Sector");
 
@@ -2850,19 +2944,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("OpportunityMatches")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Opportunity", "Opportunity")
                         .WithMany("Matches")
                         .HasForeignKey("OpportunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.RecommendationRun", "RecommendationRun")
                         .WithMany("Matches")
                         .HasForeignKey("RecommendationRunId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2877,7 +2971,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Opportunity", "Opportunity")
                         .WithMany("Requirements")
                         .HasForeignKey("OpportunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Opportunity");
@@ -2888,19 +2982,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Invoice", "Invoice")
                         .WithMany("PaymentAllocations")
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.PaymentTransaction", "PaymentTransaction")
                         .WithMany("Allocations")
                         .HasForeignKey("PaymentTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2915,12 +3009,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "InitiatedByUser")
                         .WithMany()
-                        .HasForeignKey("InitiatedByUserId");
+                        .HasForeignKey("InitiatedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
 
@@ -2931,7 +3026,8 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "PublishedByUser")
                         .WithMany()
-                        .HasForeignKey("PublishedByUserId");
+                        .HasForeignKey("PublishedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("PublishedByUser");
                 });
@@ -2941,23 +3037,24 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("RecommendationFeedback")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Opportunity", "Opportunity")
                         .WithMany()
                         .HasForeignKey("OpportunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.OpportunityMatch", "OpportunityMatch")
                         .WithMany()
-                        .HasForeignKey("OpportunityMatchId");
+                        .HasForeignKey("OpportunityMatchId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -2974,12 +3071,13 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("RecommendationRuns")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "TriggeredByUser")
                         .WithMany()
-                        .HasForeignKey("TriggeredByUserId");
+                        .HasForeignKey("TriggeredByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Business");
 
@@ -2990,7 +3088,8 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssignedReviewerUser")
                         .WithMany()
-                        .HasForeignKey("AssignedReviewerUserId");
+                        .HasForeignKey("AssignedReviewerUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("RegistrationApplications")
@@ -3001,7 +3100,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("AssignedReviewerUser");
@@ -3016,7 +3115,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany("Addresses")
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("RegistrationApplication");
@@ -3027,19 +3126,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany()
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -3053,17 +3152,19 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssignedToUser")
                         .WithMany()
-                        .HasForeignKey("AssignedToUserId");
+                        .HasForeignKey("AssignedToUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany("Tasks")
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.RegistrationTaskTemplate", "Template")
                         .WithMany()
-                        .HasForeignKey("RegistrationTaskTemplateId");
+                        .HasForeignKey("RegistrationTaskTemplateId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("AssignedToUser");
 
@@ -3077,7 +3178,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany("Directors")
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("RegistrationApplication");
@@ -3088,7 +3189,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany("ProposedNames")
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("RegistrationApplication");
@@ -3098,12 +3199,13 @@ namespace SparkVenture.Migrations
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "ActorUser")
                         .WithMany()
-                        .HasForeignKey("ActorUserId");
+                        .HasForeignKey("ActorUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany("ReviewEvents")
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ActorUser");
@@ -3116,7 +3218,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.RegistrationApplication", "RegistrationApplication")
                         .WithMany("Shareholders")
                         .HasForeignKey("RegistrationApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("RegistrationApplication");
@@ -3127,19 +3229,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("SavedOpportunities")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Opportunity", "Opportunity")
                         .WithMany("SavedByBusinesses")
                         .HasForeignKey("OpportunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "SavedByUser")
                         .WithMany()
                         .HasForeignKey("SavedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -3154,19 +3256,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("TenderApplications")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Opportunity", "Opportunity")
                         .WithMany()
                         .HasForeignKey("OpportunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -3181,19 +3283,19 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.Document", "Document")
                         .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SparkVenture.Data.Models.TenderApplication", "TenderApplication")
                         .WithMany("Documents")
                         .HasForeignKey("TenderApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Business");
@@ -3208,7 +3310,7 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
                         .WithOne("Profile")
                         .HasForeignKey("SparkVenture.Data.Models.UserProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("User");

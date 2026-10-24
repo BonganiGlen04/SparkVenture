@@ -7,6 +7,7 @@ namespace SparkVenture.Data.Models
 {
         public class RegistrationApplicationDocument
         {
+            public Guid RegistrationApplicationDocumentId { get; set; }
             public Guid RegistrationApplicationId { get; set; }
             public Guid DocumentId { get; set; }
             public Guid BusinessId { get; set; }

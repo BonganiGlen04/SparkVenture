@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SparkVenture.Data.Models;
@@ -73,39 +74,120 @@ namespace SparkVenture.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<BusinessMember>()
-                .HasOne(bm => bm.User)
-                .WithMany(u => u.BusinessMemberships)
-                .HasForeignKey(bm => bm.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Link entities use their own single-column primary keys.
+            // These unique indexes prevent duplicate links without composite primary keys.
+            builder.Entity<BusinessDocument>().HasKey(x => x.BusinessDocumentId);
+            builder.Entity<BusinessDocument>()
+                .HasIndex(x => new { x.BusinessId, x.DocumentId }).IsUnique();
 
+            builder.Entity<CashbookEntryDocument>().HasKey(x => x.CashbookEntryDocumentId);
+            builder.Entity<CashbookEntryDocument>()
+                .HasIndex(x => new { x.CashbookEntryId, x.DocumentId }).IsUnique();
+
+            builder.Entity<FundingApplicationDocument>().HasKey(x => x.FundingApplicationDocumentId);
+            builder.Entity<FundingApplicationDocument>()
+                .HasIndex(x => new { x.FundingApplicationId, x.DocumentId }).IsUnique();
+
+            builder.Entity<InvoiceDocument>().HasKey(x => x.InvoiceDocumentId);
+            builder.Entity<InvoiceDocument>()
+                .HasIndex(x => new { x.InvoiceId, x.DocumentId }).IsUnique();
+
+            builder.Entity<RegistrationApplicationDocument>().HasKey(x => x.RegistrationApplicationDocumentId);
+            builder.Entity<RegistrationApplicationDocument>()
+                .HasIndex(x => new { x.RegistrationApplicationId, x.DocumentId }).IsUnique();
+
+            builder.Entity<TenderApplicationDocument>().HasKey(x => x.TenderApplicationDocumentId);
+            builder.Entity<TenderApplicationDocument>()
+                .HasIndex(x => new { x.TenderApplicationId, x.DocumentId }).IsUnique();
+
+            // Exactly one invoice-number sequence per business. Explicitly bind the FK
+            // because this relationship has no inverse collection navigation on Business.
+            builder.Entity<InvoiceNumberSequence>().HasKey(x => x.InvoiceNumberSequenceId);
+            builder.Entity<InvoiceNumberSequence>()
+                .HasOne(x => x.Business)
+                .WithMany()
+                .HasForeignKey(x => x.BusinessId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<InvoiceNumberSequence>()
+                .HasIndex(x => x.BusinessId).IsUnique();
+
+            // A profile is an optional one-to-one extension of an Identity user.
+            // UserId is unique so one user cannot own multiple profiles.
+            builder.Entity<UserProfile>()
+                .HasOne(x => x.User)
+                .WithOne(x => x.Profile)
+                .HasForeignKey<UserProfile>(x => x.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<UserProfile>()
+                .HasIndex(x => x.UserId).IsUnique();
+
+            // Configure SQL Server rowversion columns as concurrency tokens.
+            builder.Entity<Business>().Property(x => x.RowVersion).IsRowVersion();
+            builder.Entity<Invoice>().Property(x => x.RowVersion).IsRowVersion();
+            builder.Entity<InvoiceNumberSequence>().Property(x => x.RowVersion).IsRowVersion();
+
+            // Resolve relationships with multiple navigations explicitly.
             builder.Entity<RegistrationApplication>()
                 .HasOne(x => x.Business)
                 .WithMany(x => x.RegistrationApplications)
                 .HasForeignKey(x => x.BusinessId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Entity<BusinessDocument>()
-                .HasKey(x => new { x.BusinessId, x.DocumentId });
+            builder.Entity<FundingApplication>()
+                .HasOne(x => x.Business)
+                .WithMany(x => x.FundingApplications)
+                .HasForeignKey(x => x.BusinessId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Entity<CashbookEntryDocument>()
-                .HasKey(x => new { x.CashbookEntryId, x.DocumentId });
+            // A business member has two separate user relationships. Map both explicitly
+            // so EF Core does not invent a shadow FK for either navigation.
+            builder.Entity<BusinessMember>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.BusinessMemberships)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Entity<FundingApplicationDocument>()
-                .HasKey(x => new { x.FundingApplicationId, x.DocumentId });
+            builder.Entity<BusinessMember>()
+                .HasOne(x => x.InvitedByUser)
+                .WithMany()
+                .HasForeignKey(x => x.InvitedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Entity<InvoiceDocument>()
-                .HasKey(x => new { x.InvoiceId, x.DocumentId });
+            // Explicit precision prevents EF Core's default decimal mapping from silently
+            // rounding/truncating values. Monetary/quantity values get four decimal places;
+            // scores, rates, weights, and percentages use a narrower range.
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(decimal) || property.ClrType == typeof(decimal?))
+                    {
+                        property.SetPrecision(19);
+                        property.SetScale(4);
+                    }
+                }
+            }
 
-            builder.Entity<RegistrationApplicationDocument>()
-                .HasKey(x => new { x.RegistrationApplicationId, x.DocumentId });
+            builder.Entity<BusinessSignal>().Property(x => x.Weight).HasPrecision(9, 4);
+            builder.Entity<Customer>().Property(x => x.AvgDaysToPay).HasPrecision(9, 4);
+            builder.Entity<Customer>().Property(x => x.LateInvoiceRate).HasPrecision(9, 4);
+            builder.Entity<FundingReadinessAnswer>().Property(x => x.Score).HasPrecision(9, 4);
+            builder.Entity<FundingReadinessAssessment>().Property(x => x.OverallScore).HasPrecision(9, 4);
+            builder.Entity<OpportunityMatch>().Property(x => x.Score).HasPrecision(9, 4);
+            builder.Entity<RegistrationShareholder>().Property(x => x.SharePercentage).HasPrecision(9, 4);
 
-            builder.Entity<TenderApplicationDocument>()
-                .HasKey(x => new { x.TenderApplicationId, x.DocumentId });
-
-            // One invoice-number sequence per business.
-            builder.Entity<InvoiceNumberSequence>()
-                .HasKey(x => x.BusinessId);
+            // Keep all FK constraints, but disable database-side cascading globally. SQL Server
+            // rejects multiple cascade paths; dependent cleanup must be handled deliberately by
+            // application workflows. Apply after the explicit mappings above.
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                foreach (var foreignKey in entityType.GetForeignKeys())
+                {
+                    foreignKey.DeleteBehavior = DeleteBehavior.NoAction;
+                }
+            }
         }
     }
 }

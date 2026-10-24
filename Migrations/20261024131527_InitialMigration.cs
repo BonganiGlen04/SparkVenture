@@ -232,8 +232,7 @@ namespace SparkVenture.Migrations
                         name: "FK_NotificationPreferences_ApplicationUser_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -274,8 +273,7 @@ namespace SparkVenture.Migrations
                         name: "FK_UserProfiles_ApplicationUser_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -295,8 +293,7 @@ namespace SparkVenture.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -316,8 +313,7 @@ namespace SparkVenture.Migrations
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -336,8 +332,7 @@ namespace SparkVenture.Migrations
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -354,14 +349,12 @@ namespace SparkVenture.Migrations
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -380,8 +373,7 @@ namespace SparkVenture.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -401,7 +393,7 @@ namespace SparkVenture.Migrations
                     RegistrationNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -410,8 +402,7 @@ namespace SparkVenture.Migrations
                         name: "FK_Businesses_ApplicationUser_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Businesses_Sectors_SectorId",
                         column: x => x.SectorId,
@@ -503,8 +494,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessAddresses_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -530,8 +520,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessInsights_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -559,8 +548,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessInvitations_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -579,8 +567,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessMarketLinks_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -608,8 +595,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessMembers_ApplicationUser_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_BusinessMembers_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
@@ -619,8 +605,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessMembers_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -631,7 +616,7 @@ namespace SparkVenture.Migrations
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SignalType = table.Column<int>(type: "int", nullable: false),
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: false),
                     UpdatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -641,8 +626,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessSignals_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -671,8 +655,7 @@ namespace SparkVenture.Migrations
                         name: "FK_ConsentEvents_ApplicationUser_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ConsentEvents_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -695,8 +678,8 @@ namespace SparkVenture.Migrations
                     DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AvgDaysToPay = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    LateInvoiceRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    AvgDaysToPay = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: true),
+                    LateInvoiceRate = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -705,8 +688,7 @@ namespace SparkVenture.Migrations
                         name: "FK_Customers_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -732,8 +714,7 @@ namespace SparkVenture.Migrations
                         name: "FK_Documents_ApplicationUser_UploadedByUserId",
                         column: x => x.UploadedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Documents_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -771,7 +752,7 @@ namespace SparkVenture.Migrations
                     AssessedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AssessmentVersion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OverallScore = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    OverallScore = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -786,29 +767,27 @@ namespace SparkVenture.Migrations
                         name: "FK_FundingReadinessAssessments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoiceNumberSequences",
                 columns: table => new
                 {
+                    InvoiceNumberSequenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Prefix = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NextNumber = table.Column<long>(type: "bigint", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    BusinessId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InvoiceNumberSequences", x => x.BusinessId);
+                    table.PrimaryKey("PK_InvoiceNumberSequences", x => x.InvoiceNumberSequenceId);
                     table.ForeignKey(
-                        name: "FK_InvoiceNumberSequences_Businesses_BusinessId1",
-                        column: x => x.BusinessId1,
+                        name: "FK_InvoiceNumberSequences_Businesses_BusinessId",
+                        column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -832,8 +811,7 @@ namespace SparkVenture.Migrations
                         name: "FK_Notifications_ApplicationUser_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Notifications_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -857,7 +835,7 @@ namespace SparkVenture.Migrations
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReceivedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     CurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -874,8 +852,7 @@ namespace SparkVenture.Migrations
                         name: "FK_PaymentTransactions_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -902,8 +879,7 @@ namespace SparkVenture.Migrations
                         name: "FK_RecommendationRuns_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                 });
 
             migrationBuilder.CreateTable(
@@ -932,8 +908,7 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationApplications_ApplicationUser_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RegistrationApplications_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -951,7 +926,7 @@ namespace SparkVenture.Migrations
                     FundingProviderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RequestedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    RequestedAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: true),
                     CurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -962,14 +937,12 @@ namespace SparkVenture.Migrations
                         name: "FK_FundingApplications_ApplicationUser_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_FundingApplications_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_FundingApplications_FundingProviders_FundingProviderId",
                         column: x => x.FundingProviderId,
@@ -1002,8 +975,7 @@ namespace SparkVenture.Migrations
                         name: "FK_OpportunityRequirements_Opportunities_OpportunityId",
                         column: x => x.OpportunityId,
                         principalTable: "Opportunities",
-                        principalColumn: "OpportunityId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OpportunityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1024,20 +996,17 @@ namespace SparkVenture.Migrations
                         name: "FK_SavedOpportunities_ApplicationUser_SavedByUserId",
                         column: x => x.SavedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SavedOpportunities_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_SavedOpportunities_Opportunities_OpportunityId",
                         column: x => x.OpportunityId,
                         principalTable: "Opportunities",
-                        principalColumn: "OpportunityId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OpportunityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1059,20 +1028,17 @@ namespace SparkVenture.Migrations
                         name: "FK_TenderApplications_ApplicationUser_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TenderApplications_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_TenderApplications_Opportunities_OpportunityId",
                         column: x => x.OpportunityId,
                         principalTable: "Opportunities",
-                        principalColumn: "OpportunityId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OpportunityId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1087,12 +1053,12 @@ namespace SparkVenture.Migrations
                     IssueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FullyPaidAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TaxAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AmountPaid = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    TaxAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    AmountPaid = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     CurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1101,14 +1067,12 @@ namespace SparkVenture.Migrations
                         name: "FK_Invoices_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_Invoices_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CustomerId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1132,8 +1096,7 @@ namespace SparkVenture.Migrations
                         name: "FK_BusinessCredentials_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_BusinessCredentials_Documents_EvidenceDocumentId",
                         column: x => x.EvidenceDocumentId,
@@ -1145,6 +1108,7 @@ namespace SparkVenture.Migrations
                 name: "BusinessDocuments",
                 columns: table => new
                 {
+                    BusinessDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentPurpose = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -1153,19 +1117,17 @@ namespace SparkVenture.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BusinessDocuments", x => new { x.BusinessId, x.DocumentId });
+                    table.PrimaryKey("PK_BusinessDocuments", x => x.BusinessDocumentId);
                     table.ForeignKey(
                         name: "FK_BusinessDocuments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_BusinessDocuments_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DocumentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1177,7 +1139,7 @@ namespace SparkVenture.Migrations
                     EvidenceDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     QuestionKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AnswerValue = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    Score = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1191,8 +1153,7 @@ namespace SparkVenture.Migrations
                         name: "FK_FundingReadinessAnswers_FundingReadinessAssessments_FundingReadinessAssessmentId",
                         column: x => x.FundingReadinessAssessmentId,
                         principalTable: "FundingReadinessAssessments",
-                        principalColumn: "FundingReadinessAssessmentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "FundingReadinessAssessmentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1204,7 +1165,7 @@ namespace SparkVenture.Migrations
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpportunityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OpportunityRevision = table.Column<int>(type: "int", nullable: false),
-                    Score = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Score = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: false),
                     MatchBand = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MandatoryCriteriaPassed = table.Column<bool>(type: "bit", nullable: false),
                     Explanation = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -1218,20 +1179,17 @@ namespace SparkVenture.Migrations
                         name: "FK_OpportunityMatches_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_OpportunityMatches_Opportunities_OpportunityId",
                         column: x => x.OpportunityId,
                         principalTable: "Opportunities",
-                        principalColumn: "OpportunityId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OpportunityId");
                     table.ForeignKey(
                         name: "FK_OpportunityMatches_RecommendationRuns_RecommendationRunId",
                         column: x => x.RecommendationRunId,
                         principalTable: "RecommendationRuns",
-                        principalColumn: "RecommendationRunId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RecommendationRunId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1254,14 +1212,14 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationApplicationAddresses_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                 });
 
             migrationBuilder.CreateTable(
                 name: "RegistrationApplicationDocuments",
                 columns: table => new
                 {
+                    RegistrationApplicationDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RegistrationApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1271,25 +1229,22 @@ namespace SparkVenture.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RegistrationApplicationDocuments", x => new { x.RegistrationApplicationId, x.DocumentId });
+                    table.PrimaryKey("PK_RegistrationApplicationDocuments", x => x.RegistrationApplicationDocumentId);
                     table.ForeignKey(
                         name: "FK_RegistrationApplicationDocuments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_RegistrationApplicationDocuments_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DocumentId");
                     table.ForeignKey(
                         name: "FK_RegistrationApplicationDocuments_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1318,8 +1273,7 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationApplicationTasks_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                     table.ForeignKey(
                         name: "FK_RegistrationApplicationTasks_RegistrationTaskTemplates_RegistrationTaskTemplateId",
                         column: x => x.RegistrationTaskTemplateId,
@@ -1346,8 +1300,7 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationDirectors_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1367,8 +1320,7 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationProposedNames_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1396,8 +1348,7 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationReviewEvents_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1409,7 +1360,7 @@ namespace SparkVenture.Migrations
                     ShareholderType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShareClass = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SharePercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    SharePercentage = table.Column<decimal>(type: "decimal(9,4)", precision: 9, scale: 4, nullable: true),
                     IdentityNumberEncrypted = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -1419,14 +1370,14 @@ namespace SparkVenture.Migrations
                         name: "FK_RegistrationShareholders_RegistrationApplications_RegistrationApplicationId",
                         column: x => x.RegistrationApplicationId,
                         principalTable: "RegistrationApplications",
-                        principalColumn: "RegistrationApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RegistrationApplicationId");
                 });
 
             migrationBuilder.CreateTable(
                 name: "FundingApplicationDocuments",
                 columns: table => new
                 {
+                    FundingApplicationDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FundingApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1436,31 +1387,29 @@ namespace SparkVenture.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FundingApplicationDocuments", x => new { x.FundingApplicationId, x.DocumentId });
+                    table.PrimaryKey("PK_FundingApplicationDocuments", x => x.FundingApplicationDocumentId);
                     table.ForeignKey(
                         name: "FK_FundingApplicationDocuments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_FundingApplicationDocuments_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DocumentId");
                     table.ForeignKey(
                         name: "FK_FundingApplicationDocuments_FundingApplications_FundingApplicationId",
                         column: x => x.FundingApplicationId,
                         principalTable: "FundingApplications",
-                        principalColumn: "FundingApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "FundingApplicationId");
                 });
 
             migrationBuilder.CreateTable(
                 name: "TenderApplicationDocuments",
                 columns: table => new
                 {
+                    TenderApplicationDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TenderApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1470,31 +1419,29 @@ namespace SparkVenture.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TenderApplicationDocuments", x => new { x.TenderApplicationId, x.DocumentId });
+                    table.PrimaryKey("PK_TenderApplicationDocuments", x => x.TenderApplicationDocumentId);
                     table.ForeignKey(
                         name: "FK_TenderApplicationDocuments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_TenderApplicationDocuments_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DocumentId");
                     table.ForeignKey(
                         name: "FK_TenderApplicationDocuments_TenderApplications_TenderApplicationId",
                         column: x => x.TenderApplicationId,
                         principalTable: "TenderApplications",
-                        principalColumn: "TenderApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TenderApplicationId");
                 });
 
             migrationBuilder.CreateTable(
                 name: "InvoiceDocuments",
                 columns: table => new
                 {
+                    InvoiceDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     InvoiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1503,25 +1450,22 @@ namespace SparkVenture.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InvoiceDocuments", x => new { x.InvoiceId, x.DocumentId });
+                    table.PrimaryKey("PK_InvoiceDocuments", x => x.InvoiceDocumentId);
                     table.ForeignKey(
                         name: "FK_InvoiceDocuments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_InvoiceDocuments_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DocumentId");
                     table.ForeignKey(
                         name: "FK_InvoiceDocuments_Invoices_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoices",
-                        principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "InvoiceId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1532,9 +1476,9 @@ namespace SparkVenture.Migrations
                     InvoiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    LineTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Quantity = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    LineTotal = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1543,8 +1487,7 @@ namespace SparkVenture.Migrations
                         name: "FK_InvoiceLines_Invoices_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoices",
-                        principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "InvoiceId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1555,7 +1498,7 @@ namespace SparkVenture.Migrations
                     PaymentTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     InvoiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AllocatedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AllocatedAmount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     AllocationStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PostedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -1567,20 +1510,17 @@ namespace SparkVenture.Migrations
                         name: "FK_PaymentAllocations_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_PaymentAllocations_Invoices_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoices",
-                        principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "InvoiceId");
                     table.ForeignKey(
                         name: "FK_PaymentAllocations_PaymentTransactions_PaymentTransactionId",
                         column: x => x.PaymentTransactionId,
                         principalTable: "PaymentTransactions",
-                        principalColumn: "PaymentTransactionId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "PaymentTransactionId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1606,20 +1546,17 @@ namespace SparkVenture.Migrations
                         name: "FK_RecommendationFeedbackItems_ApplicationUser_UserId",
                         column: x => x.UserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RecommendationFeedbackItems_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_RecommendationFeedbackItems_Opportunities_OpportunityId",
                         column: x => x.OpportunityId,
                         principalTable: "Opportunities",
-                        principalColumn: "OpportunityId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OpportunityId");
                     table.ForeignKey(
                         name: "FK_RecommendationFeedbackItems_OpportunityMatches_OpportunityMatchId",
                         column: x => x.OpportunityMatchId,
@@ -1642,7 +1579,7 @@ namespace SparkVenture.Migrations
                     Direction = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EntryType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     EntryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Reference = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -1655,14 +1592,12 @@ namespace SparkVenture.Migrations
                         name: "FK_CashbookEntries_ApplicationUser_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "ApplicationUser",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CashbookEntries_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_CashbookEntries_CashbookEntries_ReversesCashbookEntryId",
                         column: x => x.ReversesCashbookEntryId,
@@ -1694,6 +1629,7 @@ namespace SparkVenture.Migrations
                 name: "CashbookEntryDocuments",
                 columns: table => new
                 {
+                    CashbookEntryDocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CashbookEntryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -1702,25 +1638,22 @@ namespace SparkVenture.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CashbookEntryDocuments", x => new { x.CashbookEntryId, x.DocumentId });
+                    table.PrimaryKey("PK_CashbookEntryDocuments", x => x.CashbookEntryDocumentId);
                     table.ForeignKey(
                         name: "FK_CashbookEntryDocuments_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "BusinessId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BusinessId");
                     table.ForeignKey(
                         name: "FK_CashbookEntryDocuments_CashbookEntries_CashbookEntryId",
                         column: x => x.CashbookEntryId,
                         principalTable: "CashbookEntries",
-                        principalColumn: "CashbookEntryId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CashbookEntryId");
                     table.ForeignKey(
                         name: "FK_CashbookEntryDocuments_Documents_DocumentId",
                         column: x => x.DocumentId,
                         principalTable: "Documents",
-                        principalColumn: "DocumentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DocumentId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -1786,6 +1719,12 @@ namespace SparkVenture.Migrations
                 name: "IX_BusinessCredentials_EvidenceDocumentId",
                 table: "BusinessCredentials",
                 column: "EvidenceDocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BusinessDocuments_BusinessId_DocumentId",
+                table: "BusinessDocuments",
+                columns: new[] { "BusinessId", "DocumentId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BusinessDocuments_DocumentId",
@@ -1888,6 +1827,12 @@ namespace SparkVenture.Migrations
                 column: "BusinessId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CashbookEntryDocuments_CashbookEntryId_DocumentId",
+                table: "CashbookEntryDocuments",
+                columns: new[] { "CashbookEntryId", "DocumentId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CashbookEntryDocuments_DocumentId",
                 table: "CashbookEntryDocuments",
                 column: "DocumentId");
@@ -1953,6 +1898,12 @@ namespace SparkVenture.Migrations
                 column: "DocumentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FundingApplicationDocuments_FundingApplicationId_DocumentId",
+                table: "FundingApplicationDocuments",
+                columns: new[] { "FundingApplicationId", "DocumentId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FundingApplications_BusinessId",
                 table: "FundingApplications",
                 column: "BusinessId");
@@ -2003,14 +1954,21 @@ namespace SparkVenture.Migrations
                 column: "DocumentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceDocuments_InvoiceId_DocumentId",
+                table: "InvoiceDocuments",
+                columns: new[] { "InvoiceId", "DocumentId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoiceLines_InvoiceId",
                 table: "InvoiceLines",
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InvoiceNumberSequences_BusinessId1",
+                name: "IX_InvoiceNumberSequences_BusinessId",
                 table: "InvoiceNumberSequences",
-                column: "BusinessId1");
+                column: "BusinessId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_BusinessId",
@@ -2148,6 +2106,12 @@ namespace SparkVenture.Migrations
                 column: "DocumentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RegistrationApplicationDocuments_RegistrationApplicationId_DocumentId",
+                table: "RegistrationApplicationDocuments",
+                columns: new[] { "RegistrationApplicationId", "DocumentId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RegistrationApplications_AssignedReviewerUserId",
                 table: "RegistrationApplications",
                 column: "AssignedReviewerUserId");
@@ -2226,6 +2190,12 @@ namespace SparkVenture.Migrations
                 name: "IX_TenderApplicationDocuments_DocumentId",
                 table: "TenderApplicationDocuments",
                 column: "DocumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TenderApplicationDocuments_TenderApplicationId_DocumentId",
+                table: "TenderApplicationDocuments",
+                columns: new[] { "TenderApplicationId", "DocumentId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TenderApplications_BusinessId",

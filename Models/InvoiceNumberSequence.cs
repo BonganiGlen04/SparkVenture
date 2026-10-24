@@ -7,6 +7,7 @@ namespace SparkVenture.Data.Models
 {
         public class InvoiceNumberSequence
         {
+            public Guid InvoiceNumberSequenceId { get; set; }
             public Guid BusinessId { get; set; }
             public string Prefix { get; set; } = "INV-";
             public long NextNumber { get; set; } = 1;

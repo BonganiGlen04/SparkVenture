@@ -7,6 +7,7 @@ namespace SparkVenture.Data.Models
 {
         public class BusinessDocument
         {
+            public Guid BusinessDocumentId { get; set; }
             public Guid BusinessId { get; set; }
             public Guid DocumentId { get; set; }
             public string DocumentPurpose { get; set; } = "";

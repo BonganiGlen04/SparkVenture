@@ -7,6 +7,7 @@ namespace SparkVenture.Data.Models
 {
         public class FundingApplicationDocument
         {
+            public Guid FundingApplicationDocumentId { get; set; }
             public Guid FundingApplicationId { get; set; }
             public Guid DocumentId { get; set; }
             public Guid BusinessId { get; set; }
