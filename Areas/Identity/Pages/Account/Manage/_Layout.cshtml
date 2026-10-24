@@ -1,24 +1,26 @@
 @{
-    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
     {
         Layout = parentLayout.ToString();
     }
     else
     {
-        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+        Layout = "/Areas/Identity/Pages/_AccountLayout.cshtml";
     }
 }
 
-<h1>Manage your account</h1>
-
 <div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
+    <h1 class="text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">Manage your account</h1>
+    <p class="mt-2 text-slate-600">Change your account settings.</p>
+</div>
+
+<div class="mt-8 grid gap-6 md:grid-cols-4">
+    <div class="rounded-2xl border border-blue-100 bg-white p-3 shadow-sm md:col-span-1 md:self-start">
+        <partial name="_ManageNav" />
+    </div>
+
+    <div class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8 md:col-span-3">
+        <div class="sv-identity">
             @RenderBody()
         </div>
     </div>

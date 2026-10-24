@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - SparkVenture</title>
+
+    @* Use the same stylesheet / Tailwind setup your existing _Layout uses. *@
+    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-sky-100 text-slate-700 antialiased">
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+    // Url.Action returns null when a controller/action doesn't exist yet,
+    // so unbuilt features simply link to "#" instead of throwing.
+    string Link(string controller, string action) => Url.Action(action, controller) ?? "#";
+
+    var nav = new[]
+    {
+        new { Label = "Dashboard",     Controller = "Dashboard",           Action = "Index",      Icon = "<path d='M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z'/>" },
+        new { Label = "My Business",   Controller = "Businesses",          Action = "Index",      Icon = "<rect x='4' y='3' width='16' height='18' rx='2'/><path d='M9 8h6M9 12h6M9 16h3'/>" },
+        new { Label = "Bookkeeping",   Controller = "Cashbook",            Action = "Index",      Icon = "<rect x='4' y='3' width='16' height='18' rx='2'/><path d='M8 8h8M8 12h2M14 12h2M8 16h2M14 16h2'/>" },
+        new { Label = "Opportunities", Controller = "Opportunities",       Action = "Index",      Icon = "<path d='M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z'/>" },
+        new { Label = "Funding",       Controller = "FundingApplications", Action = "Index",      Icon = "<circle cx='12' cy='12' r='9'/><path d='M12 7v10M9.5 9.5c0-1 1.1-1.5 2.5-1.5s2.5.6 2.5 1.7-1 1.5-2.5 1.8-2.5.7-2.5 1.8 1.1 1.7 2.5 1.7 2.5-.5 2.5-1.5'/>" },
+        new { Label = "Market Links",  Controller = "Businesses",          Action = "MarketLinks", Icon = "<path d='M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1'/>" },
+        new { Label = "Documents",     Controller = "Documents",           Action = "Index",      Icon = "<path d='M7 3h7l5 5v13H7z'/><path d='M14 3v5h5'/>" },
+        new { Label = "Notifications", Controller = "Notifications",       Action = "Index",      Icon = "<path d='M6 9a6 6 0 1112 0c0 5 2 6 2 7H4c0-1 2-2 2-7zM10 20a2 2 0 004 0'/>" },
+    };
+
+    var initial = string.IsNullOrWhiteSpace(User.Identity?.Name) ? "?" : User.Identity!.Name!.Substring(0, 1).ToUpperInvariant();
+}
+
+<!-- MOBILE OVERLAY -->
+<div id="sidebarOverlay" class="fixed inset-0 z-30 hidden bg-blue-950/40 lg:hidden"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar"
+       class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-blue-100 bg-white px-4 py-6 transition-transform duration-200 lg:translate-x-0"
+       aria-label="Main navigation">
+    <a asp-controller="Dashboard" asp-action="Index" class="mb-8 block px-3">
+        <img src="~/images/nav-logo.png" alt="SparkVenture" class="h-10 w-auto object-contain" />
+    </a>
+
+    <nav class="flex-1 space-y-1 overflow-y-auto">
+        @foreach (var item in nav)
+        {
+            var active = string.Equals(currentController, item.Controller, StringComparison.OrdinalIgnoreCase)
+                         && (item.Controller != "Businesses"
+                             || string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), item.Action, StringComparison.OrdinalIgnoreCase));
+
+            <a href="@Link(item.Controller, item.Action)"
+               aria-current="@(active ? "page" : null)"
+               class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
+                      @(active ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "text-blue-900 hover:bg-blue-50")">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    @Html.Raw(item.Icon)
+                </svg>
+                <span>@item.Label</span>
+            </a>
+        }
+    </nav>
+
+    <div class="border-t border-blue-100 pt-4">
+        <a href="@(Url.Page("/Account/Manage/Index", new { area = "Identity" }) ?? "#")"
+           class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-blue-900 transition hover:bg-blue-50">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" />
+            </svg>
+            Settings
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="lg:pl-72">
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-20 border-b border-blue-100 bg-white/90 backdrop-blur">
+        <div class="flex items-center justify-between gap-4 px-5 py-3 lg:px-8">
+            <button id="sidebarToggle" type="button"
+                    aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"
+                    class="rounded-lg p-2 text-blue-950 hover:bg-blue-50 lg:hidden">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <div class="hidden lg:block"></div>
+
+            <div class="flex items-center gap-3">
+                <details class="relative">
+                    <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full bg-blue-100 text-sm font-extrabold text-blue-700 hover:bg-blue-200"
+                             aria-label="Account menu">
+                        @initial
+                    </summary>
+                    <div class="absolute right-0 mt-2 w-56 rounded-2xl border border-blue-100 bg-white p-2 shadow-xl">
+                        <p class="truncate px-3 py-2 text-xs text-slate-500">@User.Identity?.Name</p>
+                        <a href="@(Url.Page("/Account/Manage/Index", new { area = "Identity" }) ?? "#")"
+                           class="block rounded-lg px-3 py-2 text-sm font-semibold text-blue-950 hover:bg-blue-50">Account settings</a>
+                        <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Content("~/")">
+                            <button type="submit"
+                                    class="w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50">
+                                Sign out
+                            </button>
+                        </form>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+        @RenderBody()
+    </main>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    const toggle = document.getElementById("sidebarToggle");
+
+    function setSidebar(open) {
+        sidebar.classList.toggle("-translate-x-full", !open);
+        overlay.classList.toggle("hidden", !open);
+        toggle?.setAttribute("aria-expanded", String(open));
+    }
+
+    toggle?.addEventListener("click", () => setSidebar(sidebar.classList.contains("-translate-x-full")));
+    overlay?.addEventListener("click", () => setSidebar(false));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") setSidebar(false); });
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
