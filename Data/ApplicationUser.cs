@@ -8,6 +8,6 @@ namespace SparkVenture.Data;
 
 public class ApplicationUser : IdentityUser<Guid>
 {
-    public ICollection<BusinessMember> BusinessMemberships { get; set; }
-        = new List<BusinessMember>();
+    public UserProfile? Profile { get; set; }
+    public ICollection<BusinessMember> BusinessMemberships { get; set; } = new List<BusinessMember>();
 }
