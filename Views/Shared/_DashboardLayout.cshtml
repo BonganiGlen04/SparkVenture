@@ -8,7 +8,7 @@
     @* Use the same stylesheet / Tailwind setup your existing _Layout uses. *@
     <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-white to-sky-100 text-slate-700 antialiased">
+<body class="min-h-screen bg-blue-50 text-slate-700 antialiased">
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
 
@@ -42,25 +42,53 @@
         <img src="~/images/nav-logo.png" alt="SparkVenture" class="h-10 w-auto object-contain" />
     </a>
 
-    <nav class="flex-1 space-y-1 overflow-y-auto">
-        @foreach (var item in nav)
-        {
-            var active = string.Equals(currentController, item.Controller, StringComparison.OrdinalIgnoreCase)
-                         && (item.Controller != "Businesses"
-                             || string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), item.Action, StringComparison.OrdinalIgnoreCase));
+    
+<nav class="flex-1 space-y-1 overflow-y-auto">
+    @foreach (var item in nav)
+    {
+        var active = string.Equals(
+            currentController,
+            item.Controller,
+            StringComparison.OrdinalIgnoreCase)
+            && (item.Controller != "Businesses"
+                || string.Equals(
+                    ViewContext.RouteData.Values["action"]?.ToString(),
+                    item.Action,
+                    StringComparison.OrdinalIgnoreCase));
 
-            <a href="@Link(item.Controller, item.Action)"
-               aria-current="@(active ? "page" : null)"
-               class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
-                      @(active ? "bg-blue-600 text-white shadow-lg shadow-blue-200" : "text-blue-900 hover:bg-blue-50")">
-                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    @Html.Raw(item.Icon)
-                </svg>
-                <span>@item.Label</span>
-            </a>
-        }
-    </nav>
+        <a href="@Link(item.Controller, item.Action)"
+           aria-current="@(active ? "page" : null)"
+           class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition
+                  @(active
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                    : "text-blue-900 hover:bg-blue-50")">
+
+            <svg class="h-5 w-5 shrink-0"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+                @Html.Raw(item.Icon)
+            </svg>
+
+            <span>@item.Label</span>
+
+            @if (item.Controller == "Notifications")
+            {
+                <span class="ml-auto">
+                    @await Component.InvokeAsync(
+                        "NotificationBadge",
+                        new { dotOnly = false }
+                    )
+                </span>
+            }
+        </a>
+    }
+</nav>
+
 
     <div class="border-t border-blue-100 pt-4">
         <a href="@(Url.Page("/Account/Manage/Index", new { area = "Identity" }) ?? "#")"

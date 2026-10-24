@@ -1,0 +1,50 @@
+@model SparkVenture.ViewModels.EditBusinessViewModel
+@{
+    ViewData["Title"] = "Edit Business";
+    Layout = "_DashboardLayout";
+    var input = "mt-2 block w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-sm text-blue-950 shadow-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100";
+    var label = "block text-sm font-bold text-blue-950";
+}
+<a asp-controller="Businesses" asp-action="Details" asp-route-id="@Model.BusinessId"
+   class="text-sm font-bold text-blue-600 hover:text-blue-800">← Back to Business Profile</a>
+
+<div class="mt-6">
+    <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Business management</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-blue-950">Edit Business Profile</h1>
+    <p class="mt-2 text-sm text-slate-600">Update your business information. Only owners and managers can edit these details.</p>
+</div>
+
+<form asp-controller="Businesses" asp-action="Edit" asp-route-id="@Model.BusinessId" method="post" class="mt-8 max-w-3xl space-y-6">
+    @Html.AntiForgeryToken()
+    <input asp-for="BusinessId" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-sm font-semibold text-red-600"></div>
+
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-extrabold text-blue-950">Business Information</h2>
+        <div class="mt-6 space-y-5">
+            <div><label asp-for="TradingName" class="@label"></label><input asp-for="TradingName" class="@input" /><span asp-validation-for="TradingName" class="mt-1 block text-xs text-red-600"></span></div>
+            <div><label asp-for="LegalName" class="@label"></label><input asp-for="LegalName" class="@input" /><span asp-validation-for="LegalName" class="mt-1 block text-xs text-red-600"></span></div>
+            <div><label asp-for="RegistrationNumber" class="@label"></label><input asp-for="RegistrationNumber" class="@input" /><span asp-validation-for="RegistrationNumber" class="mt-1 block text-xs text-red-600"></span></div>
+        </div>
+    </section>
+
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-extrabold text-blue-950">Profile and Location</h2>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            <div><label asp-for="BusinessTypeId" class="@label">Business Type</label><select asp-for="BusinessTypeId" asp-items="Model.BusinessTypes" class="@input"><option value="">Select business type</option></select><span asp-validation-for="BusinessTypeId" class="mt-1 block text-xs text-red-600"></span></div>
+            <div><label asp-for="BusinessStageId" class="@label">Business Stage</label><select asp-for="BusinessStageId" asp-items="Model.BusinessStages" class="@input"><option value="">Select business stage</option></select><span asp-validation-for="BusinessStageId" class="mt-1 block text-xs text-red-600"></span></div>
+            <div><label asp-for="SectorId" class="@label">Business Sector</label><select asp-for="SectorId" asp-items="Model.Sectors" class="@input"><option value="">Select sector</option></select><span asp-validation-for="SectorId" class="mt-1 block text-xs text-red-600"></span></div>
+            <div><label asp-for="ProvinceId" class="@label">Province</label><select asp-for="ProvinceId" asp-items="Model.Provinces" class="@input"><option value="">Select province</option></select><span asp-validation-for="ProvinceId" class="mt-1 block text-xs text-red-600"></span></div>
+        </div>
+    </section>
+
+    <div class="flex flex-col-reverse gap-3 rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:flex-row sm:justify-between">
+        <a asp-controller="Businesses" asp-action="Details" asp-route-id="@Model.BusinessId"
+           class="rounded-xl border border-blue-200 px-6 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-50">Cancel</a>
+        <button type="submit" class="rounded-xl bg-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700">Save Changes →</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

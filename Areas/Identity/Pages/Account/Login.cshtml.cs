@@ -116,7 +116,7 @@ public class LoginModel : PageModel
 
             if (await _userManager.IsInRoleAsync(user, "Customer"))
             {
-                return LocalRedirect(Url.Action("Index", "Dashboard") ?? "/Dashboard");
+                return LocalRedirect(Url.Action("Index", "Onboarding") ?? "/Dashboard");
             }
 
             // Do not leave an authenticated session active if no supported

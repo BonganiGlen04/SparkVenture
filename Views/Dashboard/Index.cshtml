@@ -2,11 +2,261 @@
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "_DashboardLayout";
+
+    string Rand(decimal value) => "R " + value.ToString("N2");
+    var progressOffset = 339.29 * (100 - Model.GettingStartedPercent) / 100.0;
 }
 
-<div>
-    <h1 class="text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">
-        Welcome back, @Model.Email!
-    </h1>
-    <p class="mt-2 text-slate-600">Here's your business overview.</p>
+<!-- HEADER -->
+<div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+    <div>
+        <p class="text-xs font-bold tracking-[0.16em] text-blue-600 uppercase">Your business workspace</p>
+        <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">
+            Welcome to @Model.BusinessName
+        </h1>
+        <p class="mt-2 text-sm text-slate-600">
+            @Model.Sector · @Model.Province · @Model.BusinessStage
+        </p>
+        <span class="mt-3 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
+            @Model.BusinessRole access
+        </span>
+    </div>
+
+    <a asp-controller="Businesses" asp-action="Index"
+       class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-white px-5 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50">
+        ← My Businesses
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div role="status" class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">
+        @message
+    </div>
+}
+
+<!-- FINANCIAL SUMMARY / COUNTS (ALL REAL DATABASE VALUES) -->
+<div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-slate-500">Income this month</p>
+        <p class="mt-3 text-2xl font-extrabold text-blue-950">@Rand(Model.IncomeThisMonth)</p>
+        <p class="mt-2 text-xs text-slate-500">Posted cashbook income</p>
+    </section>
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-slate-500">Expenses this month</p>
+        <p class="mt-3 text-2xl font-extrabold text-blue-950">@Rand(Model.ExpensesThisMonth)</p>
+        <p class="mt-2 text-xs text-slate-500">Posted cashbook expenses</p>
+    </section>
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-slate-500">Outstanding invoices</p>
+        <p class="mt-3 text-2xl font-extrabold text-blue-950">@Rand(Model.OutstandingInvoices)</p>
+        <p class="mt-2 text-xs text-slate-500">@Model.OpenInvoiceCount unpaid or partly paid invoice(s)</p>
+    </section>
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-slate-500">Saved opportunities</p>
+        <p class="mt-3 text-2xl font-extrabold text-blue-950">@Model.SavedOpportunitiesCount</p>
+        <p class="mt-2 text-xs text-slate-500">@Model.UnreadNotificationsCount unread in-app notification(s)</p>
+    </section>
+</div>
+
+<div class="mt-6 grid gap-6 lg:grid-cols-2">
+
+    <!-- GETTING STARTED (NOT FUNDING READINESS) -->
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm" aria-labelledby="progress-heading">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+                <h2 id="progress-heading" class="text-lg font-extrabold text-blue-950">Getting Started</h2>
+                <p class="mt-1 text-xs text-slate-500">Your SparkVenture setup checklist, not a funding score.</p>
+            </div>
+            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                @Model.CompletedTaskCount / @Model.TaskCount done
+            </span>
+        </div>
+
+        <div class="mt-5 flex flex-col items-center gap-6 sm:flex-row">
+            <div class="relative h-36 w-36 shrink-0">
+                <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90" role="img"
+                     aria-label="Getting started progress @Model.GettingStartedPercent percent">
+                    <defs>
+                        <linearGradient id="dashboardProgress" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#0ea5e9" />
+                            <stop offset="100%" stop-color="#2563eb" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="#e0f2fe" stroke-width="10" />
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="url(#dashboardProgress)" stroke-width="10"
+                            stroke-linecap="round" stroke-dasharray="339.29" stroke-dashoffset="@progressOffset" />
+                </svg>
+                <span class="absolute inset-0 flex items-center justify-center text-3xl font-extrabold text-blue-950">
+                    @Model.GettingStartedPercent%
+                </span>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-blue-950">
+                    @(Model.GettingStartedPercent == 100 ? "You're off to a strong start!" : "Keep building your business workspace")
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">
+                    Complete these practical first steps. You can continue at your own pace.
+                </p>
+                <a asp-controller="Businesses" asp-action="Details" asp-route-id="@Model.BusinessId"
+                   class="mt-4 inline-block text-sm font-bold text-blue-600 hover:text-blue-800">
+                    View business profile →
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-6 space-y-4 border-t border-blue-50 pt-5">
+            @foreach (var task in Model.GettingStartedTasks)
+            {
+                <div class="flex items-start gap-3">
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold @(task.IsComplete ? "bg-emerald-100 text-emerald-700" : "bg-blue-50 text-blue-600")"
+                          aria-label="@(task.IsComplete ? "Complete" : "Not complete")">
+                        @(task.IsComplete ? "✓" : "○")
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-bold text-blue-950">@task.Title</p>
+                        <p class="mt-1 text-xs leading-5 text-slate-500">@task.Description</p>
+                    </div>
+                    @if (!task.IsComplete)
+                    {
+                        @if (task.UsesBusinessIdAsId)
+                        {
+                            <a asp-controller="@task.Controller" asp-action="@task.Action" asp-route-id="@Model.BusinessId"
+                               class="shrink-0 text-xs font-bold text-blue-600 hover:text-blue-800">Go →</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="@task.Controller" asp-action="@task.Action" asp-route-businessId="@Model.BusinessId"
+                               class="shrink-0 text-xs font-bold text-blue-600 hover:text-blue-800">Go →</a>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm" aria-labelledby="actions-heading">
+        <h2 id="actions-heading" class="text-lg font-extrabold text-blue-950">Quick Actions</h2>
+        <p class="mt-1 text-xs text-slate-500">Start with the tools you need most.</p>
+
+        <div class="mt-5 grid grid-cols-2 gap-3">
+            <a asp-controller="Cashbook" asp-action="Create" asp-route-businessId="@Model.BusinessId"
+               class="flex flex-col gap-3 rounded-xl bg-emerald-50 p-4 text-sm font-semibold text-blue-950 transition hover:bg-emerald-100 sm:flex-row sm:items-center">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg" aria-hidden="true">➕</span>
+                <span>Add income or expense</span>
+            </a>
+            <a asp-controller="Invoices" asp-action="Create" asp-route-businessId="@Model.BusinessId"
+               class="flex flex-col gap-3 rounded-xl bg-blue-50 p-4 text-sm font-semibold text-blue-950 transition hover:bg-blue-100 sm:flex-row sm:items-center">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg" aria-hidden="true">🧾</span>
+                <span>Create invoice</span>
+            </a>
+            <a asp-controller="Opportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="flex flex-col gap-3 rounded-xl bg-blue-50 p-4 text-sm font-semibold text-blue-950 transition hover:bg-blue-100 sm:flex-row sm:items-center">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg" aria-hidden="true">🔎</span>
+                <span>Find opportunities</span>
+            </a>
+            <a asp-controller="Businesses" asp-action="Details" asp-route-id="@Model.BusinessId"
+               class="flex flex-col gap-3 rounded-xl bg-blue-50 p-4 text-sm font-semibold text-blue-950 transition hover:bg-blue-100 sm:flex-row sm:items-center">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg" aria-hidden="true">🏪</span>
+                <span>My business profile</span>
+            </a>
+        </div>
+
+        <div class="mt-6 rounded-xl border border-blue-100 bg-blue-50 p-4">
+            <p class="text-sm font-bold text-blue-950">Registration preparation</p>
+            <p class="mt-1 text-sm text-slate-600">
+                @if (Model.HasCipcRegistrationNumber)
+                {
+                    <text>A CIPC registration number is recorded on your profile. This is not independent verification.</text>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.RegistrationPreparationStatus))
+                {
+                    <text>Your internal preparation status is: <strong>@Model.RegistrationPreparationStatus</strong>.</text>
+                }
+                else
+                {
+                    <text>No registration-preparation workflow has been started yet. This is optional for some business types.</text>
+                }
+            </p>
+            <a asp-controller="RegistrationApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="mt-3 inline-block text-sm font-bold text-blue-600 hover:text-blue-800">View registration guidance →</a>
+        </div>
+    </section>
+
+    <!-- CASH FLOW CHART (real records) -->
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm" aria-labelledby="cashflow-heading">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h2 id="cashflow-heading" class="text-lg font-extrabold text-blue-950">Cash Flow</h2>
+                <p class="mt-1 text-xs text-slate-500">Last six months · posted cashbook entries</p>
+            </div>
+            <p class="text-right text-sm font-extrabold @(Model.NetCashThisMonth >= 0 ? "text-emerald-600" : "text-red-600")">
+                @Rand(Model.NetCashThisMonth)
+                <span class="block text-xs font-normal text-slate-500">Net this month</span>
+            </p>
+        </div>
+        <div class="mt-5 flex items-center gap-4 text-xs font-semibold text-slate-600">
+            <span><span class="mr-1 inline-block h-3 w-3 rounded-sm bg-blue-600"></span> Income</span>
+            <span><span class="mr-1 inline-block h-3 w-3 rounded-sm bg-amber-400"></span> Expenses</span>
+        </div>
+        <div class="mt-5 grid grid-cols-6 gap-2" role="img" aria-label="Cash flow by month: income and expenses shown as grouped bars">
+            @foreach (var month in Model.CashflowMonths)
+            {
+                <div class="flex flex-col items-center gap-2">
+                    <div class="flex h-40 w-full max-w-16 items-end justify-center gap-1 border-b border-blue-100 bg-slate-50 px-1" 
+                         title="@month.Label — Income @Rand(month.Income), expenses @Rand(month.Expenses)">
+                        <div class="w-1/2 rounded-t bg-blue-600" style="height: @(month.IncomeBarPercent)%"></div>
+                        <div class="w-1/2 rounded-t bg-amber-400" style="height: @(month.ExpensesBarPercent)%"></div>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-500">@month.Label</span>
+                </div>
+            }
+        </div>
+        @if (Model.CashflowMonths.All(m => m.Income == 0 && m.Expenses == 0))
+        {
+            <p class="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-xs text-slate-600">
+                No posted cashbook activity in the last six months yet. Your chart will populate as you record income and expenses.
+            </p>
+        }
+    </section>
+
+    <!-- RECENT ACTIVITY -->
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm" aria-labelledby="activity-heading">
+        <div class="flex items-center justify-between gap-3">
+            <h2 id="activity-heading" class="text-lg font-extrabold text-blue-950">Recent Activity</h2>
+            <a asp-controller="Notifications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="text-xs font-bold text-blue-600 hover:text-blue-800">Notifications →</a>
+        </div>
+
+        @if (Model.RecentActivity.Count == 0)
+        {
+            <div class="mt-6 rounded-xl bg-blue-50 p-6 text-center">
+                <p class="text-2xl" aria-hidden="true">📭</p>
+                <p class="mt-2 text-sm font-bold text-blue-950">Nothing here yet</p>
+                <p class="mt-1 text-xs text-slate-600">Your notifications and cashbook activity will appear here.</p>
+            </div>
+        }
+        else
+        {
+            <ul class="mt-4 divide-y divide-blue-50">
+                @foreach (var item in Model.RecentActivity)
+                {
+                    <li>
+                        <a asp-controller="@item.Controller" asp-action="@item.Action" asp-route-businessId="@Model.BusinessId"
+                           class="flex items-center gap-4 py-3 transition hover:opacity-80">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-lg font-bold @(item.Kind == "notification" ? "bg-indigo-100 text-indigo-700" : item.Kind == "income" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700")" aria-hidden="true">
+                                @item.Icon
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block text-sm font-bold break-words text-blue-950">@item.Title</span>
+                                <span class="mt-1 block text-xs text-slate-500">@item.Detail · @item.OccurredAtUtc.ToString("dd MMM yyyy, HH:mm") UTC</span>
+                            </span>
+                            <span class="text-slate-400" aria-hidden="true">›</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
 </div>

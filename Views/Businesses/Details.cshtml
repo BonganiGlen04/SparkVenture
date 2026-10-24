@@ -1,0 +1,54 @@
+﻿@model SparkVenture.ViewModels.BusinessCardViewModel
+@{
+    ViewData["Title"] = "Business Profile";
+    Layout = "_DashboardLayout";
+}
+
+<a asp-controller="Businesses" asp-action="Index"
+   class="text-sm font-bold text-blue-600 hover:text-blue-800">← Back to My Businesses</a>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div role="status" class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">@successMessage</div>
+}
+
+<div class="mt-6 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
+    <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
+        <div>
+            <p class="text-xs font-bold tracking-widest text-blue-600 uppercase">Business profile</p>
+            <h1 class="mt-2 text-3xl font-extrabold text-blue-950">@Model.TradingName</h1>
+            <p class="mt-2 text-sm text-slate-500">@Model.Sector · @Model.Province</p>
+            <span class="mt-3 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">@Model.Role</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a asp-controller="Dashboard" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Open Workspace →</a>
+            @if (Model.CanEdit)
+            {
+                <a asp-controller="Businesses" asp-action="Edit" asp-route-id="@Model.BusinessId"
+                   class="rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">Edit Profile</a>
+            }
+            <a asp-controller="BusinessMembers" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
+                Team Members
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="mt-6 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
+    <h2 class="text-lg font-extrabold text-blue-950">Business details</h2>
+    <dl class="mt-5 grid gap-6 sm:grid-cols-2">
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Trading Name</dt><dd class="mt-1 font-bold text-blue-950">@Model.TradingName</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Legal Name</dt><dd class="mt-1 font-bold text-blue-950">@(string.IsNullOrWhiteSpace(Model.LegalName) ? "Not added" : Model.LegalName)</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Business Type</dt><dd class="mt-1 font-bold text-blue-950">@Model.BusinessType</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Business Stage</dt><dd class="mt-1 font-bold text-blue-950">@Model.BusinessStage</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Sector</dt><dd class="mt-1 font-bold text-blue-950">@Model.Sector</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Province</dt><dd class="mt-1 font-bold text-blue-950">@Model.Province</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">CIPC Registration Number</dt><dd class="mt-1 font-bold text-blue-950">@(string.IsNullOrWhiteSpace(Model.RegistrationNumber) ? "Not added" : Model.RegistrationNumber)</dd></div>
+        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Profile Created</dt><dd class="mt-1 font-bold text-blue-950">@Model.CreatedAtUtc.ToString("dd MMM yyyy")</dd></div>
+    </dl>
+    <p class="mt-7 rounded-xl bg-blue-50 px-5 py-4 text-sm leading-6 text-blue-900">
+        This is your SparkVenture business profile. Entering a registration number here does not verify official CIPC registration.
+    </p>
+</section>

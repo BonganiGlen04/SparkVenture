@@ -223,59 +223,6 @@ namespace SparkVenture.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("SparkVenture.Data.Models.ApplicationUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApplicationUser");
-                });
-
             modelBuilder.Entity("SparkVenture.Data.Models.AuditLog", b =>
                 {
                     b.Property<Guid>("AuditLogId")
@@ -596,9 +543,6 @@ namespace SparkVenture.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
 
@@ -620,8 +564,6 @@ namespace SparkVenture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("BusinessMemberId");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("BusinessId");
 
@@ -2387,7 +2329,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.AuditLog", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "ActorUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "ActorUser")
                         .WithMany()
                         .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -2404,7 +2346,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.Business", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2487,7 +2429,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "InvitedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "InvitedByUser")
                         .WithMany()
                         .HasForeignKey("InvitedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -2510,23 +2452,18 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.BusinessMember", b =>
                 {
-                    b.HasOne("SparkVenture.Data.ApplicationUser", null)
-                        .WithMany("BusinessMemberships")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("SparkVenture.Data.Models.Business", "Business")
                         .WithMany("Members")
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "InvitedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "InvitedByUser")
                         .WithMany()
                         .HasForeignKey("InvitedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "User")
                         .WithMany("BusinessMemberships")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2558,7 +2495,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2633,7 +2570,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.ConsentEvent", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "ActorUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "ActorUser")
                         .WithMany()
                         .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -2648,7 +2585,7 @@ namespace SparkVenture.Migrations
                         .HasForeignKey("PrivacyNoticeVersionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2676,12 +2613,12 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.DataSubjectRequest", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssignedToUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "AssignedToUser")
                         .WithMany()
                         .HasForeignKey("AssignedToUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "RequesterUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "RequesterUser")
                         .WithMany()
                         .HasForeignKey("RequesterUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -2698,7 +2635,7 @@ namespace SparkVenture.Migrations
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "UploadedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "UploadedByUser")
                         .WithMany()
                         .HasForeignKey("UploadedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2727,7 +2664,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2799,7 +2736,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.FundingReadinessAssessment", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssessedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "AssessedByUser")
                         .WithMany()
                         .HasForeignKey("AssessedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -2895,7 +2832,7 @@ namespace SparkVenture.Migrations
                         .HasForeignKey("NotificationTemplateId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -2910,7 +2847,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.NotificationPreference", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -3009,7 +2946,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "InitiatedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "InitiatedByUser")
                         .WithMany()
                         .HasForeignKey("InitiatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -3021,7 +2958,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.PrivacyNoticeVersion", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "PublishedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "PublishedByUser")
                         .WithMany()
                         .HasForeignKey("PublishedByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -3048,7 +2985,7 @@ namespace SparkVenture.Migrations
                         .HasForeignKey("OpportunityMatchId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -3071,7 +3008,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "TriggeredByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "TriggeredByUser")
                         .WithMany()
                         .HasForeignKey("TriggeredByUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -3083,7 +3020,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.RegistrationApplication", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssignedReviewerUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "AssignedReviewerUser")
                         .WithMany()
                         .HasForeignKey("AssignedReviewerUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -3094,7 +3031,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -3147,7 +3084,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.RegistrationApplicationTask", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "AssignedToUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "AssignedToUser")
                         .WithMany()
                         .HasForeignKey("AssignedToUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -3194,7 +3131,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.RegistrationReviewEvent", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "ActorUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "ActorUser")
                         .WithMany()
                         .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -3235,7 +3172,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "SavedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "SavedByUser")
                         .WithMany()
                         .HasForeignKey("SavedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -3256,7 +3193,7 @@ namespace SparkVenture.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "CreatedByUser")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -3304,7 +3241,7 @@ namespace SparkVenture.Migrations
 
             modelBuilder.Entity("SparkVenture.Data.Models.UserProfile", b =>
                 {
-                    b.HasOne("SparkVenture.Data.Models.ApplicationUser", "User")
+                    b.HasOne("SparkVenture.Data.ApplicationUser", "User")
                         .WithOne("Profile")
                         .HasForeignKey("SparkVenture.Data.Models.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -3314,11 +3251,6 @@ namespace SparkVenture.Migrations
                 });
 
             modelBuilder.Entity("SparkVenture.Data.ApplicationUser", b =>
-                {
-                    b.Navigation("BusinessMemberships");
-                });
-
-            modelBuilder.Entity("SparkVenture.Data.Models.ApplicationUser", b =>
                 {
                     b.Navigation("BusinessMemberships");
 
