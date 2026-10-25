@@ -1,0 +1,23 @@
+@model SparkVenture.ViewModels.AcceptBusinessInvitationViewModel
+@{
+    ViewData["Title"] = "Accept Team Invitation";
+    Layout = "_DashboardLayout";
+}
+
+<div class="mx-auto max-w-xl rounded-2xl border border-blue-100 bg-white p-7 shadow-sm sm:p-9">
+    <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-2xl">👥</div>
+    <p class="mt-6 text-xs font-extrabold uppercase tracking-widest text-blue-600">Team invitation</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-blue-950">Join @Model.BusinessName</h1>
+    <p class="mt-4 text-sm leading-6 text-slate-600">
+        You have been invited as <strong>@Model.Role</strong>, using <strong>@Model.InvitedEmail</strong>.
+        Accepting gives you access to the business according to this role.
+    </p>
+    <form asp-controller="BusinessMembers" asp-action="Accept" method="post" class="mt-8">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="token" value="@Model.Token" />
+        <button type="submit" class="w-full rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700">
+            Accept invitation →
+        </button>
+    </form>
+    <p class="mt-4 text-xs text-slate-500">The invitation is single-use. You can only accept with the verified, invited email account.</p>
+</div>

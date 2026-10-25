@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SparkVenture.Data;
 using SparkVenture.Data.Models;
+using SparkVenture.Services;
 
 namespace SparkVenture
 {
@@ -34,6 +35,12 @@ namespace SparkVenture
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
+
+            builder.Services.AddScoped<IBusinessInvitationEmailSender, SmtpBusinessInvitationEmailSender>();
+
+
+
+
             var app = builder.Build();
 
             // The database must already have its Identity migrations applied.
@@ -58,6 +65,17 @@ namespace SparkVenture
             app.UseAuthorization();
 
             app.MapStaticAssets();
+            // Suggested on ALL pages (at least the invitation workflow):
+            // Add after creating app and before app.MapControllerRoute, app.MapRazorPages, etc.
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers["Referrer-Policy"] = "no-referrer";
+                await next();
+            });
+
+            // Keep the existing Identity, DbContext, MVC, antiforgery, authentication and
+            // authorization registrations/middleware as they currently are.
+            // Ensure app.UseAuthentication() runs before app.UseAuthorization().
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
