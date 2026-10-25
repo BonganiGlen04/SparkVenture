@@ -2276,6 +2276,20 @@ namespace SparkVenture.Migrations
                     b.ToTable("UserProfiles");
                 });
 
+            modelBuilder.Entity("SparkVenture.Models.DocumentContent", b =>
+                {
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("FileBytes")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("DocumentId");
+
+                    b.ToTable("DocumentContents", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationRole", null)
@@ -3248,6 +3262,15 @@ namespace SparkVenture.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SparkVenture.Models.DocumentContent", b =>
+                {
+                    b.HasOne("SparkVenture.Data.Models.Document", null)
+                        .WithOne()
+                        .HasForeignKey("SparkVenture.Models.DocumentContent", "DocumentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SparkVenture.Data.ApplicationUser", b =>

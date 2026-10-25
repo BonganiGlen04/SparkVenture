@@ -1,8 +1,11 @@
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SparkVenture.Data.Models;
+using SparkVenture.Models;
+using System;
+using System.Linq;
+using System.Reflection.Emit;
+
 
 namespace SparkVenture.Data
 {
@@ -69,10 +72,22 @@ namespace SparkVenture.Data
         public DbSet<DataSubjectRequest> DataSubjectRequests => Set<DataSubjectRequest>();
         public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         public DbSet<DataRetentionPolicy> DataRetentionPolicies => Set<DataRetentionPolicy>();
+        public DbSet<DocumentContent> DocumentContents => Set<DocumentContent>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+            base.OnModelCreating(builder);  
+
+            builder.Entity<DocumentContent>(entity =>
+            {
+                entity.ToTable("DocumentContents");
+                entity.HasKey(x => x.DocumentId);
+                entity.Property(x => x.FileBytes).HasColumnType("varbinary(max)").IsRequired();
+                entity.HasOne<Document>().WithOne()
+                      .HasForeignKey<DocumentContent>(x => x.DocumentId)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
+
 
             // Link entities use their own single-column primary keys.
             // These unique indexes prevent duplicate links without composite primary keys.

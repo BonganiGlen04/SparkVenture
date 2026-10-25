@@ -1,0 +1,61 @@
+@model SparkVenture.ViewModels.NotificationsIndexViewModel
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Notifications";
+}
+<div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Your account</p>
+        <h1 class="mt-2 text-3xl font-extrabold text-blue-950 sm:text-4xl">Notifications</h1>
+        <p class="mt-2 text-sm text-slate-600">@Model.UnreadCount unread in-app messages</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+        <a asp-action="Preferences" class="rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">Preferences</a>
+        @if (Model.UnreadCount > 0)
+        {
+            <form asp-action="MarkAllRead" method="post">
+                @Html.AntiForgeryToken()
+                <button class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700" type="submit">Mark all read</button>
+            </form>
+        }
+    </div>
+</div>
+<div class="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+    @if (Model.Items.Count == 0)
+    {
+        <div class="px-6 py-16 text-center">
+            <div class="text-4xl" aria-hidden="true">🔔</div>
+            <h2 class="mt-4 text-lg font-extrabold text-blue-950">No notifications yet</h2>
+            <p class="mt-2 text-sm text-slate-600">Updates and reminders will appear here.</p>
+        </div>
+    }
+    else
+    {
+        <div class="divide-y divide-blue-50">
+            @foreach (var item in Model.Items)
+            {
+                <article class="flex flex-col gap-3 px-6 py-5 sm:flex-row sm:items-start sm:justify-between @(item.ReadAtUtc == null ? "bg-blue-50/60" : "")">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h2 class="font-bold text-blue-950">@item.Title</h2>
+                            @if (item.ReadAtUtc == null)
+                            {
+                                <span class="rounded-full bg-blue-100 px-2 py-1 text-xs font-bold text-blue-700">Unread</span>
+                            }
+                        </div>
+                        <p class="mt-2 text-sm leading-6 text-slate-600">@item.Body</p>
+                        <p class="mt-2 text-xs text-slate-400">@item.CreatedAtUtc.ToString("dd MMM yyyy HH:mm") UTC</p>
+                    </div>
+                    @if (item.ReadAtUtc == null)
+                    {
+                        <form asp-action="MarkRead" method="post" class="shrink-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="notificationId" value="@item.NotificationId" />
+                            <button type="submit" class="rounded-xl border border-blue-200 px-4 py-2 text-xs font-bold text-blue-700 hover:bg-blue-50">Mark read</button>
+                        </form>
+                    }
+                </article>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,141 @@
+﻿@model SparkVenture.ViewModels.BusinessDocumentsIndexViewModel
+@{
+    ViewData["Title"] = "Business Documents";
+    Layout = "_DashboardLayout";
+    var stored = Model.Documents.Count(d => d.HasStoredContent);
+    var totalSize = Model.Documents.Sum(d => d.SizeBytes);
+}
+
+<!-- HEADER -->
+<div class="mb-8">
+    <a asp-controller="Businesses" asp-action="Details" asp-route-id="@Model.BusinessId"
+       class="text-sm font-semibold text-blue-600 hover:text-blue-800">← Back to Business Profile</a>
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <p class="text-xs font-bold tracking-widest text-blue-600 uppercase">Business Management</p>
+            <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">Document Vault</h1>
+            <p class="mt-2 text-sm text-slate-600">
+                Documents for <strong class="text-blue-950">@Model.BusinessName</strong>
+            </p>
+        </div>
+        @if (Model.CanUpload)
+        {
+            <a asp-controller="Documents" asp-action="Upload" asp-route-businessId="@Model.BusinessId"
+               class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700">
+                <span aria-hidden="true">＋</span> Upload Document
+            </a>
+        }
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div role="status" class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">
+        @message
+    </div>
+}
+
+<!-- SUMMARY -->
+<div class="mb-6 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500">Documents listed</p>
+        <p class="mt-2 text-3xl font-extrabold text-blue-950">@Model.Documents.Count</p>
+    </div>
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500">Files stored in SQL Server</p>
+        <p class="mt-2 text-3xl font-extrabold text-blue-950">@stored</p>
+    </div>
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500">Listed file sizes</p>
+        <p class="mt-2 text-3xl font-extrabold text-blue-950">@((totalSize / 1024.0 / 1024.0).ToString("N1")) MB</p>
+    </div>
+</div>
+
+<div class="rounded-2xl border border-blue-100 bg-white shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-blue-100 p-5 sm:p-6">
+        <div>
+            <h2 class="text-lg font-extrabold text-blue-950">Your business documents</h2>
+            <p class="mt-1 text-xs text-slate-500">Showing up to 100 most recent documents</p>
+        </div>
+        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">@Model.CurrentUserRole access</span>
+    </div>
+
+    @if (Model.Documents.Count == 0)
+    {
+        <div class="flex flex-col items-center px-6 py-16 text-center">
+            <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl" aria-hidden="true">📁</span>
+            <h3 class="mt-5 text-xl font-bold text-blue-950">No documents yet</h3>
+            <p class="mt-2 max-w-md text-sm leading-6 text-slate-600">
+                Keep your company registration, compliance and other business documents together in one secure location.
+            </p>
+            @if (Model.CanUpload)
+            {
+                <a asp-controller="Documents" asp-action="Upload" asp-route-businessId="@Model.BusinessId"
+                   class="mt-6 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700">
+                    Upload your first document →
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="divide-y divide-blue-50">
+            @foreach (var item in Model.Documents)
+            {
+                <article class="flex flex-col gap-3 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <div class="flex min-w-0 items-start gap-4">
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl" aria-hidden="true">📄</span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold break-all text-blue-950">@item.OriginalFileName</p>
+                            <p class="mt-1 text-xs text-slate-500">@item.DocumentPurpose · @((item.SizeBytes / 1024.0).ToString("N0")) KB</p>
+                            <p class="mt-1 text-xs text-slate-400">Added @item.CreatedAtUtc.ToString("dd MMM yyyy") UTC</p>
+                        </div>
+                    </div>
+                    <div class="flex shrink-0 flex-wrap items-center gap-2 pl-14 sm:pl-0">
+                        @if (item.IsPrimary)
+                        {
+                            <span class="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">Primary</span>
+                        }
+                        @if (item.HasStoredContent)
+                        {
+                            <a asp-controller="Documents" asp-action="Download"
+                               asp-route-businessId="@Model.BusinessId"
+                               asp-route-businessDocumentId="@item.BusinessDocumentId"
+                               class="rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700">
+                                Download
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500"
+                                  title="This document has no file bytes stored in SQL Server">
+                                No stored file
+                            </span>
+                        }
+                        @if (Model.CanUpload)
+                        {
+                            <form asp-controller="Documents" asp-action="DeleteLink" method="post"
+                                  onsubmit="return confirm('Remove this document from the business vault? The underlying document may be retained for other records.');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                                <input type="hidden" name="businessDocumentId" value="@item.BusinessDocumentId" />
+                                <button type="submit"
+                                        class="rounded-xl border border-red-200 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50">
+                                    Remove link
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>
+
+<div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+    <h3 class="text-sm font-bold text-amber-900">Development-only document safety notice</h3>
+    <p class="mt-2 text-sm leading-6 text-amber-800">
+        Uploaded files are stored privately in SQL Server, but are not checked for malware.
+        Use only trusted test documents for now. Re-enable scanning before allowing general public uploads.
+    </p>
+</div>

@@ -1,16 +1,12 @@
-﻿
-namespace SparkVenture.ViewModels
+namespace SparkVenture.ViewModels;
+
+public sealed class NotificationBadgeViewModel
 {
-    public class NotificationBadgeViewModel
+    public int Count { get; }
+    public bool DotOnly { get; }
+    public NotificationBadgeViewModel(int count, bool dotOnly)
     {
-        public int Count { get; set; }
-
-        public bool DotOnly { get; set; }
-
-        public NotificationBadgeViewModel(int count, bool dotOnly)
-        {
-            Count = count;
-            DotOnly = dotOnly;
-        }
+        Count = count;
+        DotOnly = dotOnly;
     }
 }

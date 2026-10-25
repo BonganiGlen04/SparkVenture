@@ -38,7 +38,10 @@ namespace SparkVenture
 
             builder.Services.AddScoped<IBusinessInvitationEmailSender, SmtpBusinessInvitationEmailSender>();
 
-
+            // Option A: NO scanner (safe MVP default; all new uploads remain Pending and
+            // cannot be downloaded yet). This is functional for upload + listing + unlink.
+            builder.Services.AddScoped<SparkVenture.Services.IDocumentMalwareScanner,
+                SparkVenture.Services.UnavailableDocumentMalwareScanner>();
 
 
             var app = builder.Build();

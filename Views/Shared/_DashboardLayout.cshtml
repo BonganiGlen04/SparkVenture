@@ -76,15 +76,18 @@
 
             <span>@item.Label</span>
 
+           
             @if (item.Controller == "Notifications")
             {
-                <span class="ml-auto">
+                <span id="notificationBadgeContainer"
+                      class="ml-auto">
                     @await Component.InvokeAsync(
                         "NotificationBadge",
                         new { dotOnly = false }
                     )
                 </span>
             }
+
         </a>
     }
 </nav>
@@ -158,6 +161,65 @@
     toggle?.addEventListener("click", () => setSidebar(sidebar.classList.contains("-translate-x-full")));
     overlay?.addEventListener("click", () => setSidebar(false));
     document.addEventListener("keydown", e => { if (e.key === "Escape") setSidebar(false); });
+</script>
+<script>
+    
+    const notificationBadgeContainer =
+        document.getElementById("notificationBadgeContainer");
+
+    async function refreshNotificationBadge() {
+        if (!notificationBadgeContainer) return;
+
+        try {
+            const response = await fetch(
+                "/Notifications/UnreadCount",
+                {
+                    cache: "no-store",
+                    credentials: "same-origin"
+                }
+            );
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+            const count = Number(data.count);
+
+            if (!Number.isFinite(count) || count < 0) return;
+
+            if (count === 0) {
+                notificationBadgeContainer.replaceChildren();
+                return;
+            }
+
+            const badge = document.createElement("span");
+
+            badge.className =
+                "inline-flex min-w-5 items-center justify-center " +
+                "rounded-full bg-red-500 px-1.5 py-0.5 " +
+                "text-xs font-bold text-white";
+
+            badge.textContent = count > 99
+                ? "99+"
+                : String(count);
+
+            badge.setAttribute(
+                "aria-label",
+                `${count} unread notifications`
+            );
+
+            notificationBadgeContainer.replaceChildren(badge);
+        }
+        catch (error) {
+            console.error("Notification badge refresh failed.", error);
+        }
+    }
+
+    // Update when page loads.
+    refreshNotificationBadge();
+
+    // Check every 15 seconds.
+    setInterval(refreshNotificationBadge, 15000);
+
 </script>
 
 @await RenderSectionAsync("Scripts", required: false)
