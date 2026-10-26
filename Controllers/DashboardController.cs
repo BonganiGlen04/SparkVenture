@@ -35,6 +35,15 @@ public sealed class DashboardController : Controller
             return RedirectToAction("Index", "Admin");
         }
 
+        if (!businessId.HasValue &&
+        HttpContext.Items[
+            SparkVenture.Infrastructure
+                .ActiveBusinessContextMiddleware.BusinessIdItemKey
+        ] is Guid activeBusinessId)
+        {
+            return RedirectToAction(nameof(Index),
+                new { businessId = activeBusinessId });
+        }
 
         if (!Guid.TryParse(_userManager.GetUserId(User), out var userId))
             return Challenge();

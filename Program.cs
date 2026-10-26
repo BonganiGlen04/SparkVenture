@@ -65,6 +65,8 @@ namespace SparkVenture
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseMiddleware<SparkVenture.Infrastructure.ActiveBusinessContextMiddleware>();
+
             app.UseAuthorization();
 
             app.MapStaticAssets();

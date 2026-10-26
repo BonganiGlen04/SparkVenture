@@ -1,107 +1,246 @@
-﻿@model SparkVenture.ViewModels.BusinessCardViewModel
+@model SparkVenture.ViewModels.BusinessCardViewModel
 @{
-    ViewData["Title"] = "Business Profile";
+    ViewData["Title"] = "Business Workspace";
     Layout = "_DashboardLayout";
+
+    // Set these to true only after the corresponding module has been integrated and tested.
+    // Phase B registration is on hold; set other flags false if their modules are not integrated.
+    bool opportunitiesEnabled = true;
+    bool fundingEnabled = true;
+    bool registrationEnabled = false;
+    bool marketLinksEnabled = true;
+
+    bool financeVisible = Model.Role is "Owner" or "Manager" or "Accountant";
+    bool documentsVisible = Model.CanEdit; // Current DocumentsController supports Owner / Manager.
 }
 
-<a asp-controller="Businesses" asp-action="Index"
-   class="text-sm font-bold text-blue-600 hover:text-blue-800">← Back to My Businesses</a>
+<div class="mx-auto max-w-6xl space-y-7">
+    <nav aria-label="Breadcrumb" class="text-sm">
+        <a asp-controller="Businesses" asp-action="Index"
+           class="font-semibold text-blue-600 hover:text-blue-800">← My Businesses</a>
+        <span class="mx-2 text-slate-300" aria-hidden="true">/</span>
+        <span class="text-slate-500">Business workspace</span>
+    </nav>
 
-@if (TempData["SuccessMessage"] is string successMessage)
-{
-    <div role="status" class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">@successMessage</div>
-}
-
-<div class="mt-6 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
-    <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
-        <div>
-            <p class="text-xs font-bold tracking-widest text-blue-600 uppercase">Business profile</p>
-            <h1 class="mt-2 text-3xl font-extrabold text-blue-950">@Model.TradingName</h1>
-            <p class="mt-2 text-sm text-slate-500">@Model.Sector · @Model.Province</p>
-            <span class="mt-3 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">@Model.Role</span>
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div role="status" class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">
+            @successMessage
         </div>
-        <div class="flex flex-wrap gap-3">
-            <a asp-controller="Dashboard" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Open Workspace →</a>
-            @if (Model.CanEdit)
-            {
-                <a asp-controller="Businesses" asp-action="Edit" asp-route-id="@Model.BusinessId"
-                   class="rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">Edit Profile</a>
-            }
-            <a asp-controller="BusinessMembers" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
-                Team Members
-            </a>
-            
-            <a asp-controller="Documents" 
-                asp-action="Index" 
-                asp-route-businessId="@Model.BusinessId" class="rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">Document Vault</a>
+    }
 
+    <!-- One clear business header, not a toolbar containing every feature -->
+    <section aria-labelledby="business-heading" class="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+        <div class="px-5 py-6 sm:px-8 sm:py-8">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                <div class="min-w-0">
+                    <p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Your business workspace</p>
+                    <h1 id="business-heading" class="mt-2 break-words text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">
+                        @Model.TradingName
+                    </h1>
+                    <p class="mt-2 text-sm text-slate-600">
+                        Manage your business from one place. Choose what you want to work on below.
+                    </p>
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">@Model.Role access</span>
+                        <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">@Model.BusinessStage</span>
+                    </div>
+                </div>
 
-            <a asp-controller="RegistrationApplications"
-               asp-action="Index"
-               asp-route-businessId="@Model.BusinessId"
-               class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">
-                <span></span>
-                Company Registration
-            </a>
-
-            <a asp-controller="Cashbook" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="inline-flex items-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">
-                Open Cashbook
-            </a>
-            <a asp-controller="Customers" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Customers</a>
-            <a asp-controller="Invoices" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Invoices</a>
-            <a asp-controller="Payments" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Payments</a>
-            <a asp-controller="FinanceInsights" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Financial insights</a>
-            
-            <div class="mt-6 flex flex-wrap gap-3">
-                <a asp-controller="Opportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-                   class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white">Find opportunities</a>
-                <a asp-controller="Recommendations" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">My matches</a>
-                <a asp-controller="SavedOpportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Saved</a>
-                <a asp-controller="TenderApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Tender preparation</a>
-                <a asp-controller="OpportunityTracking" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Tracking</a>
+                <div class="flex shrink-0 flex-wrap gap-2">
+                    <a asp-controller="Dashboard" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                       class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700">
+                        Open Dashboard →
+                    </a>
+                    @if (Model.CanEdit)
+                    {
+                        <a asp-controller="Businesses" asp-action="Edit" asp-route-id="@Model.BusinessId"
+                           class="inline-flex items-center justify-center rounded-xl border border-blue-200 bg-white px-5 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50">
+                            Edit Profile
+                        </a>
+                    }
+                </div>
             </div>
-            
-            <a asp-controller="FundingProviders" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="inline-flex rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
-                Funding Providers
-            </a>
-            <a asp-controller="FundingReadiness" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="inline-flex rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
-                Funding Readiness
-            </a>
-            <a asp-controller="FundingApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
-               class="inline-flex rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700">
-                Funding Applications
-            </a>
-
         </div>
-    </div>
-</div>
+        <div class="grid gap-px border-t border-blue-100 bg-blue-100 sm:grid-cols-3">
+            <div class="bg-blue-50 px-5 py-4 sm:px-8">
+                <p class="text-xs font-semibold text-slate-500">Business sector</p>
+                <p class="mt-1 break-words text-sm font-bold text-blue-950">@Model.Sector</p>
+            </div>
+            <div class="bg-blue-50 px-5 py-4 sm:px-8">
+                <p class="text-xs font-semibold text-slate-500">Location</p>
+                <p class="mt-1 break-words text-sm font-bold text-blue-950">@Model.Province</p>
+            </div>
+            <div class="bg-blue-50 px-5 py-4 sm:px-8">
+                <p class="text-xs font-semibold text-slate-500">Business type</p>
+                <p class="mt-1 break-words text-sm font-bold text-blue-950">@Model.BusinessType</p>
+            </div>
+        </div>
+    </section>
 
-<section class="mt-6 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
-    <h2 class="text-lg font-extrabold text-blue-950">Business details</h2>
-    <dl class="mt-5 grid gap-6 sm:grid-cols-2">
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Trading Name</dt><dd class="mt-1 font-bold text-blue-950">@Model.TradingName</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Legal Name</dt><dd class="mt-1 font-bold text-blue-950">@(string.IsNullOrWhiteSpace(Model.LegalName) ? "Not added" : Model.LegalName)</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Business Type</dt><dd class="mt-1 font-bold text-blue-950">@Model.BusinessType</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Business Stage</dt><dd class="mt-1 font-bold text-blue-950">@Model.BusinessStage</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Sector</dt><dd class="mt-1 font-bold text-blue-950">@Model.Sector</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Province</dt><dd class="mt-1 font-bold text-blue-950">@Model.Province</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">CIPC Registration Number</dt><dd class="mt-1 font-bold text-blue-950">@(string.IsNullOrWhiteSpace(Model.RegistrationNumber) ? "Not added" : Model.RegistrationNumber)</dd></div>
-        <div><dt class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Profile Created</dt><dd class="mt-1 font-bold text-blue-950">@Model.CreatedAtUtc.ToString("dd MMM yyyy")</dd></div>
-    </dl>
-    <p class="mt-7 rounded-xl bg-blue-50 px-5 py-4 text-sm leading-6 text-blue-900">
-        This is your SparkVenture business profile. Entering a registration number here does not verify official CIPC registration.
-    </p>
-</section>
+    <!-- Workspace tools: grouped by entrepreneur goal instead of a giant button row -->
+    <section aria-labelledby="tools-heading">
+        <div class="mb-4">
+            <p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">What would you like to do?</p>
+            <h2 id="tools-heading" class="mt-1 text-xl font-extrabold text-blue-950 sm:text-2xl">Business tools</h2>
+            <p class="mt-1 text-sm text-slate-500">Open a task below. Less frequently used tools are tucked away under “More tools”.</p>
+        </div>
+
+        <div class="grid items-start gap-5 lg:grid-cols-2">
+            <!-- FINANCE -->
+            <section aria-labelledby="finance-tools" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl" aria-hidden="true">💳</span>
+                    <div>
+                        <h3 id="finance-tools" class="text-lg font-extrabold text-blue-950">Manage money</h3>
+                        <p class="mt-1 text-sm text-slate-600">Track business income, expenses, customers and invoices.</p>
+                    </div>
+                </div>
+                @if (financeVisible)
+                {
+                    <div class="mt-5 grid gap-2 sm:grid-cols-2">
+                        <a asp-controller="Cashbook" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-blue-700">Open Cashbook →</a>
+                        <a asp-controller="Invoices" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl border border-blue-200 px-4 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-50">Invoices</a>
+                    </div>
+                    <details class="mt-4 border-t border-slate-100 pt-4">
+                        <summary class="cursor-pointer text-sm font-bold text-blue-700 hover:text-blue-900">More finance tools</summary>
+                        <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                            <a asp-controller="Customers" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Customers →</a>
+                            <a asp-controller="Payments" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Payments →</a>
+                            <a asp-controller="FinanceInsights" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Financial Insights →</a>
+                            <a asp-controller="Cashbook" asp-action="Reports" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Cashbook Reports →</a>
+                        </div>
+                    </details>
+                }
+                else
+                {
+                    <p class="mt-5 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Your business role does not include finance editing. Ask the business owner about access.</p>
+                }
+            </section>
+
+            <!-- OPPORTUNITIES -->
+            <section aria-labelledby="opportunities-tools" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl" aria-hidden="true">🎯</span>
+                    <div>
+                        <h3 id="opportunities-tools" class="text-lg font-extrabold text-blue-950">Find opportunities</h3>
+                        <p class="mt-1 text-sm text-slate-600">Discover work and prepare for tenders or supplier opportunities.</p>
+                    </div>
+                </div>
+                @if (opportunitiesEnabled)
+                {
+                    <div class="mt-5 grid gap-2 sm:grid-cols-2">
+                        <a asp-controller="Opportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-blue-700">Browse Opportunities →</a>
+                        <a asp-controller="Recommendations" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl border border-blue-200 px-4 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-50">My Matches</a>
+                    </div>
+                    <details class="mt-4 border-t border-slate-100 pt-4">
+                        <summary class="cursor-pointer text-sm font-bold text-blue-700 hover:text-blue-900">More opportunity tools</summary>
+                        <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                            <a asp-controller="SavedOpportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Saved Opportunities →</a>
+                            <a asp-controller="TenderApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Tender Preparation →</a>
+                            <a asp-controller="OpportunityTracking" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Application Tracking →</a>
+                        </div>
+                    </details>
+                }
+                else
+                {
+                    <p class="mt-5 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-500">Opportunity tools will appear here after Phase D has been integrated and tested.</p>
+                }
+            </section>
+
+            <!-- FUNDING -->
+            <section aria-labelledby="funding-tools" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl" aria-hidden="true">🌱</span>
+                    <div>
+                        <h3 id="funding-tools" class="text-lg font-extrabold text-blue-950">Explore funding</h3>
+                        <p class="mt-1 text-sm text-slate-600">Understand funding readiness and prepare an application.</p>
+                    </div>
+                </div>
+                @if (fundingEnabled)
+                {
+                    <div class="mt-5 grid gap-2 sm:grid-cols-2">
+                        <a asp-controller="FundingReadiness" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-blue-700">Check Readiness →</a>
+                        <a asp-controller="FundingProviders" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl border border-blue-200 px-4 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-50">Find Funders</a>
+                    </div>
+                    <details class="mt-4 border-t border-slate-100 pt-4">
+                        <summary class="cursor-pointer text-sm font-bold text-blue-700 hover:text-blue-900">More funding tools</summary>
+                        <div class="mt-3">
+                            <a asp-controller="FundingApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                               class="block rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">My Funding Applications →</a>
+                        </div>
+                    </details>
+                }
+                else
+                {
+                    <p class="mt-5 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-500">Funding tools will appear here when Phase E is ready.</p>
+                }
+            </section>
+
+            <!-- ESSENTIALS -->
+            <section aria-labelledby="essentials-tools" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xl" aria-hidden="true">📁</span>
+                    <div>
+                        <h3 id="essentials-tools" class="text-lg font-extrabold text-blue-950">Business essentials</h3>
+                        <p class="mt-1 text-sm text-slate-600">Keep documents, team access and business information organised.</p>
+                    </div>
+                </div>
+                <div class="mt-5 grid gap-2 sm:grid-cols-2">
+                    @if (documentsVisible)
+                    {
+                        <a asp-controller="Documents" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                           class="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-blue-700">Document Vault →</a>
+                    }
+                    <a asp-controller="BusinessMembers" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                       class="rounded-xl border border-blue-200 px-4 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-50">Team Members</a>
+                </div>
+                <details class="mt-4 border-t border-slate-100 pt-4">
+                    <summary class="cursor-pointer text-sm font-bold text-blue-700 hover:text-blue-900">More business tools</summary>
+                    <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                        @if (marketLinksEnabled)
+                        {
+                            <a asp-controller="Businesses" asp-action="MarketLinks" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Market Links →</a>
+                        }
+                        @if (registrationEnabled && Model.CanEdit)
+                        {
+                            <a asp-controller="RegistrationApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Registration Preparation →</a>
+                        }
+                        @if (Model.CanEdit)
+                        {
+                            <a asp-controller="Businesses" asp-action="Edit" asp-route-id="@Model.BusinessId" class="rounded-lg bg-slate-50 px-3 py-3 text-sm font-semibold text-blue-900 hover:bg-blue-50">Edit Business Details →</a>
+                        }
+                    </div>
+                    @if (registrationEnabled && Model.CanEdit)
+                    {
+                        <p class="mt-3 text-xs leading-5 text-slate-500">Registration preparation is optional. Official company filing happens through CIPC, not SparkVenture.</p>
+                    }
+                </details>
+            </section>
+        </div>
+    </section>
+
+    <!-- Business details are important but need not fill the top of the workspace -->
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-7">
+        <details>
+            <summary class="cursor-pointer text-lg font-extrabold text-blue-950">Business profile information <span class="ml-1 text-sm font-semibold text-blue-600">(show details)</span></summary>
+            <dl class="mt-6 grid gap-x-8 gap-y-5 border-t border-slate-100 pt-5 sm:grid-cols-2">
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Trading name</dt><dd class="mt-1 break-words text-sm font-bold text-blue-950">@Model.TradingName</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Legal name</dt><dd class="mt-1 break-words text-sm font-bold text-blue-950">@(string.IsNullOrWhiteSpace(Model.LegalName) ? "Not added" : Model.LegalName)</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Business type</dt><dd class="mt-1 text-sm font-bold text-blue-950">@Model.BusinessType</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Business stage</dt><dd class="mt-1 text-sm font-bold text-blue-950">@Model.BusinessStage</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Sector</dt><dd class="mt-1 text-sm font-bold text-blue-950">@Model.Sector</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Province</dt><dd class="mt-1 text-sm font-bold text-blue-950">@Model.Province</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">CIPC registration number (self-provided)</dt><dd class="mt-1 break-words text-sm font-bold text-blue-950">@(string.IsNullOrWhiteSpace(Model.RegistrationNumber) ? "Not added" : Model.RegistrationNumber)</dd></div>
+                <div><dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Profile created</dt><dd class="mt-1 text-sm font-bold text-blue-950">@Model.CreatedAtUtc.ToString("dd MMM yyyy")</dd></div>
+            </dl>
+            <p class="mt-5 rounded-xl bg-blue-50 px-4 py-3 text-xs leading-5 text-blue-900">A registration number entered in this profile is not proof of CIPC verification.</p>
+        </details>
+    </section>
+</div>
