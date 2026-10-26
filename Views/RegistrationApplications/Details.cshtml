@@ -1,0 +1,65 @@
+@model SparkVenture.ViewModels.RegistrationApplicationDetailsViewModel
+@{
+    ViewData["Title"] = "Registration Progress";
+    Layout = "_DashboardLayout";
+    var percent = Model.TotalSteps == 0 ? 0 : (int)Math.Round(Model.CompletedSteps * 100.0 / Model.TotalSteps);
+}
+
+<div class="mb-8">
+    <a asp-controller="RegistrationApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+       class="text-sm font-semibold text-blue-600 hover:text-blue-800">← Registration Applications</a>
+    <p class="mt-5 text-xs font-bold uppercase tracking-widest text-blue-600">Company registration</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-blue-950 sm:text-4xl">Registration checklist</h1>
+    <p class="mt-2 text-sm text-slate-600">@Model.BusinessName · <strong class="text-blue-950">@Model.Status</strong></p>
+</div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div role="status" class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">@message</div>
+}
+
+<div class="grid gap-6 xl:grid-cols-3">
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm xl:col-span-2">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="text-xl font-extrabold text-blue-950">Your preparation steps</h2>
+            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">@Model.CompletedSteps of @Model.TotalSteps completed</span>
+        </div>
+        <div class="mt-5 h-2 overflow-hidden rounded-full bg-blue-100" role="progressbar"
+             aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" aria-label="Registration preparation progress">
+            <div class="h-full rounded-full bg-blue-600" style="width: @(percent)%"></div>
+        </div>
+
+        <div class="mt-6 divide-y divide-blue-50">
+            @foreach (var step in Model.Steps)
+            {
+                var completed = step.Status == "Completed";
+                var current = step.StepKey == Model.CurrentStepKey;
+                <div class="flex items-start gap-4 py-5">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg @(completed ? "bg-emerald-100 text-emerald-700" : current ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500")">
+                        @(completed ? "✓" : current ? "→" : "·")
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-bold text-blue-950">@step.Title</h3>
+                        <p class="mt-1 text-sm leading-6 text-slate-600">@step.Instructions</p>
+                        <p class="mt-2 text-xs font-semibold text-blue-700">@step.Status</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <aside class="space-y-5">
+        <div class="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+            <h2 class="font-extrabold text-blue-950">Application details</h2>
+            <dl class="mt-4 space-y-3 text-sm">
+                <div><dt class="text-xs text-slate-500">Status</dt><dd class="font-semibold text-blue-950">@Model.Status</dd></div>
+                <div><dt class="text-xs text-slate-500">Current step</dt><dd class="font-semibold text-blue-950">@Model.CurrentStepKey</dd></div>
+                <div><dt class="text-xs text-slate-500">Last updated</dt><dd class="font-semibold text-blue-950">@Model.UpdatedAtUtc.ToString("dd MMM yyyy") UTC</dd></div>
+            </dl>
+        </div>
+        <div class="rounded-2xl border border-amber-100 bg-amber-50 p-6">
+            <h2 class="font-bold text-amber-900">Coming in Step B2</h2>
+            <p class="mt-2 text-sm leading-6 text-amber-800">You'll be able to open each step, fill in its form and save your progress. For now, this page proves that draft creation and checklist storage work.</p>
+        </div>
+    </aside>
+</div>

@@ -1,0 +1,78 @@
+@model SparkVenture.ViewModels.RegistrationApplicationsIndexViewModel
+@{
+    ViewData["Title"] = "Registration Applications";
+    Layout = "_DashboardLayout";
+}
+
+<div class="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+    <div>
+        <a asp-controller="Businesses" asp-action="Details" asp-route-id="@Model.BusinessId"
+           class="text-sm font-semibold text-blue-600 hover:text-blue-800">← Business Profile</a>
+        <p class="mt-5 text-xs font-bold uppercase tracking-widest text-blue-600">Company registration</p>
+        <h1 class="mt-2 text-3xl font-extrabold text-blue-950 sm:text-4xl">Registration Applications</h1>
+        <p class="mt-2 text-sm text-slate-600">Prepare and track registration details for <strong>@Model.BusinessName</strong>.</p>
+    </div>
+    <form asp-controller="RegistrationApplications" asp-action="Start" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="businessId" value="@Model.BusinessId" />
+        <button type="submit"
+                class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 hover:bg-blue-700">
+            ＋ Start / Resume Application
+        </button>
+    </form>
+</div>
+
+@if (TempData["ErrorMessage"] is string errorMessage)
+{
+    <div role="alert" class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">@errorMessage</div>
+}
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div role="status" class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">@successMessage</div>
+}
+
+<div class="mb-6 rounded-2xl border border-blue-100 bg-blue-50 p-5 text-sm leading-6 text-blue-900">
+    <strong>Important:</strong> SparkVenture helps you prepare your documents and information.
+    This page does not register your company with CIPC or replace the official filing process.
+</div>
+
+<section class="rounded-2xl border border-blue-100 bg-white shadow-sm">
+    <div class="border-b border-blue-100 p-5 sm:p-6">
+        <h2 class="text-lg font-extrabold text-blue-950">Your applications</h2>
+        <p class="mt-1 text-xs text-slate-500">Showing up to 50 most recently updated records</p>
+    </div>
+
+    @if (Model.Applications.Count == 0)
+    {
+        <div class="px-6 py-16 text-center">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-3xl">📋</div>
+            <h3 class="mt-5 text-xl font-bold text-blue-950">No registration applications yet</h3>
+            <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600">
+                Start a draft to see your preparation checklist. Your progress will be stored in SQL Server.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="divide-y divide-blue-50">
+            @foreach (var application in Model.Applications)
+            {
+                <article class="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
+                    <div class="min-w-0">
+                        <p class="font-bold text-blue-950">Company registration preparation</p>
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">@application.Status</span>
+                            <span class="text-xs text-slate-500">Step: @application.CurrentStepKey</span>
+                        </div>
+                        <p class="mt-2 text-xs text-slate-400">Updated @application.UpdatedAtUtc.ToString("dd MMM yyyy") UTC</p>
+                    </div>
+                    <a asp-controller="RegistrationApplications" asp-action="Details"
+                       asp-route-id="@application.RegistrationApplicationId"
+                       class="inline-flex shrink-0 items-center justify-center rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
+                        View application →
+                    </a>
+                </article>
+            }
+        </div>
+    }
+</section>
