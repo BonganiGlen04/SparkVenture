@@ -1,0 +1,117 @@
+@using System
+@{
+    var activeController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var activeAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var username = User.Identity?.Name ?? "Administrator";
+    var initial = username.Length > 0 ? username[..1].ToUpperInvariant() : "A";
+
+    // Platform governance navigation only. No entrepreneur-facing modules here.
+    var items = new[]
+    {
+        new { Label = "Overview", Controller = "Admin", Action = "Index", Icon = "<rect x='3' y='3' width='7' height='7' rx='1'/><rect x='14' y='3' width='7' height='7' rx='1'/><rect x='3' y='14' width='7' height='7' rx='1'/><rect x='14' y='14' width='7' height='7' rx='1'/>" },
+        new { Label = "Platform users", Controller = "AdminDirectory", Action = "Users", Icon = "<circle cx='9' cy='7' r='3'/><path d='M3 20v-2a6 6 0 0 1 12 0v2M18 10a3 3 0 0 1 0 6M19 20v-1a5 5 0 0 0-2-4'/>" },
+        new { Label = "Business profiles", Controller = "AdminDirectory", Action = "Businesses", Icon = "<rect x='4' y='4' width='16' height='17' rx='2'/><path d='M8 9h8M8 13h8M10 21v-4h4v4'/>" },
+        new { Label = "Privacy requests", Controller = "Admin", Action = "PrivacyRequests", Icon = "<path d='M9 3h6l4 4v14H5V3h4z'/><path d='M14 3v5h5M9 13h6M9 17h6'/>" },
+        new { Label = "Audit logs", Controller = "AuditLogs", Action = "Index", Icon = "<path d='M3 12a9 9 0 1 0 3-6.7'/><path d='M3 4v5h5M12 7v5l4 2'/>" },
+        new { Label = "Reference values", Controller = "Admin", Action = "References", Icon = "<path d='M5 4h14v16H5zM9 8h6M9 12h6M9 16h4'/>" },
+        new { Label = "Business sectors", Controller = "Admin", Action = "Sectors", Icon = "<path d='M4 20V7l8-4 8 4v13M4 10h16M9 20v-6h6v6'/>" },
+        new { Label = "Privacy notices", Controller = "Admin", Action = "PrivacyNotices", Icon = "<path d='M6 3h12v18H6zM9 8h6M9 12h6M9 16h4'/>" },
+        new { Label = "Retention policies", Controller = "Admin", Action = "RetentionPolicies", Icon = "<path d='M4 6h16M6 6v14h12V6M9 10h6M9 14h6M10 3h4'/>" }
+    };
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - SparkVenture Admin</title>
+    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-700 antialiased">
+    <div id="adminOverlay" class="fixed inset-0 z-30 hidden bg-slate-900/40 lg:hidden"></div>
+    <aside id="adminSidebar"
+           aria-label="Administration navigation"
+           class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white px-4 py-6 transition-transform duration-200 lg:translate-x-0">
+        <a asp-controller="Admin" asp-action="Index" class="flex items-center gap-3 px-3 pb-7">
+            <img src="~/images/nav-logo.png" alt="SparkVenture" class="h-10 w-auto max-w-40 object-contain" />
+        </a>
+        <div class="mx-2 mb-5 rounded-xl border border-blue-100 bg-blue-50 p-3">
+            <div class="flex items-center gap-2 text-sm font-bold text-blue-950">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2 20 6v6c0 5-3 8-8 10-5-2-8-5-8-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+                Admin workspace
+            </div>
+            <p class="mt-1 text-xs leading-5 text-slate-600">Platform oversight and governance</p>
+        </div>
+        <nav class="flex-1 space-y-1 overflow-y-auto" aria-label="Administration sections">
+            @foreach (var item in items)
+            {
+                var active = string.Equals(activeController, item.Controller, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(activeAction, item.Action, StringComparison.OrdinalIgnoreCase);
+                <a asp-controller="@item.Controller"
+                   asp-action="@item.Action"
+                   aria-current="@(active ? "page" : null)"
+                   class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition @(active ? "bg-blue-600 text-white shadow-sm" : "text-slate-700 hover:bg-blue-50 hover:text-blue-900")">
+                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        @Html.Raw(item.Icon)
+                    </svg>
+                    <span>@item.Label</span>
+                </a>
+            }
+        </nav>
+        <div class="border-t border-slate-200 pt-4">
+            <a asp-area="Identity" asp-page="/Account/Manage/Index"
+               class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-blue-50">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 22c0-5 3-8 8-8s8 3 8 8"/></svg>
+                My account
+            </a>
+        </div>
+    </aside>
+
+    <div class="lg:pl-72">
+        <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+            <div class="flex items-center justify-between gap-3 px-5 py-3 lg:px-8">
+                <button id="adminSidebarToggle" type="button" aria-label="Open administration navigation" aria-expanded="false" aria-controls="adminSidebar"
+                        class="rounded-lg p-2 text-blue-950 hover:bg-blue-50 lg:hidden">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-wider text-blue-600">SparkVenture · Administration</p>
+                    <p class="hidden text-sm text-slate-500 sm:block">Restricted staff workspace</p>
+                </div>
+                <details class="relative">
+                    <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full bg-blue-100 text-sm font-extrabold text-blue-700 hover:bg-blue-200"
+                             aria-label="Admin account menu">@initial</summary>
+                    <div class="absolute right-0 z-50 mt-2 w-60 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                        <p class="truncate px-3 py-2 text-xs text-slate-500">@username</p>
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index"
+                           class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50">Account settings</a>
+                        <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Content("~/")">
+                            <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50">Sign out</button>
+                        </form>
+                    </div>
+                </details>
+            </div>
+        </header>
+        <main class="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script>
+        (() => {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('adminOverlay');
+            const toggle = document.getElementById('adminSidebarToggle');
+            function setOpen(open) {
+                sidebar.classList.toggle('-translate-x-full', !open);
+                overlay.classList.toggle('hidden', !open);
+                toggle.setAttribute('aria-expanded', String(open));
+            }
+            toggle.addEventListener('click', () => setOpen(sidebar.classList.contains('-translate-x-full')));
+            overlay.addEventListener('click', () => setOpen(false));
+            document.addEventListener('keydown', event => { if (event.key === 'Escape') setOpen(false); });
+        })();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

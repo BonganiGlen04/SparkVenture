@@ -1,0 +1,101 @@
+@model SparkVenture.ViewModels.TenderDetailsVm
+@{
+    ViewData["Title"] = "Tender Preparation";
+    Layout = "_DashboardLayout";
+    var app = Model.Application;
+    var editable = Model.CanManage && app.Status == "InProgress";
+}
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-bold text-blue-600">← Tender preparations</a>
+<div class="mt-5 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+        <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">@app.Status</span>
+        @if (Model.IsDemo) { <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-900">Demo opportunity</span> }
+    </div>
+    <h1 class="mt-3 text-3xl font-extrabold text-blue-950">@app.Title</h1>
+    <p class="mt-2 text-sm text-slate-600">Deadline: @(app.DeadlineUtc?.ToString("dd MMM yyyy HH:mm 'UTC'") ?? "Not specified")</p>
+    <p class="mt-1 text-sm text-slate-600">Publisher: @Model.SourceName</p>
+    @if (SparkVenture.Services.OpportunityQueries.IsValidHttpsUrl(Model.SourceWebsite))
+    { <a href="@Model.SourceWebsite" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700">Visit publisher website</a> }
+    @if (TempData["SuccessMessage"] is string message)
+    { <p role="status" class="mt-4 rounded-xl bg-green-50 p-3 text-sm text-green-800">@message</p> }
+</div>
+<div class="mt-6 grid gap-5 lg:grid-cols-2">
+    <section class="rounded-2xl border border-blue-100 bg-white p-6">
+        <h2 class="text-lg font-extrabold text-blue-950">Requirements checklist</h2>
+        <p class="mt-1 text-xs text-slate-500">Review the original source. These requirements are not independently verified.</p>
+        <div class="mt-4 divide-y divide-blue-50">
+            @foreach (var rule in Model.Requirements)
+            { <div class="py-3 text-sm"><span class="font-bold text-blue-950">@rule.Type</span> · @rule.Operator @rule.Value <span class="text-xs text-slate-500">(@(rule.IsMandatory ? "Mandatory" : "Optional"))</span></div> }
+            @if (Model.Requirements.Count == 0) { <p class="py-4 text-sm text-slate-600">No structured requirements are saved.</p> }
+        </div>
+    </section>
+    <section class="rounded-2xl border border-blue-100 bg-white p-6">
+        <h2 class="text-lg font-extrabold text-blue-950">Supporting documents</h2>
+        <p class="mt-1 text-xs text-slate-500">Links to files in this business's Document Vault; the original files are retained if a link is removed.</p>
+        <div class="mt-4 space-y-3">
+            @foreach (var doc in Model.Documents)
+            {
+                <div class="rounded-xl bg-blue-50 p-3 text-sm">
+                    <p class="break-all font-semibold text-blue-950">@doc.OriginalFileName</p>
+                    <p class="text-xs text-slate-500">@doc.Purpose · @(doc.HasStoredContent ? "Stored file" : "Metadata only; file missing")</p>
+                    @if (editable)
+                    { <form asp-action="RemoveDocument" method="post" class="mt-2">@Html.AntiForgeryToken()
+                        <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                        <input type="hidden" name="tenderApplicationId" value="@app.TenderApplicationId" />
+                        <input type="hidden" name="tenderApplicationDocumentId" value="@doc.TenderApplicationDocumentId" />
+                        <button type="submit" class="text-xs font-bold text-red-700">Remove link</button></form> }
+                </div>
+            }
+            @if (Model.Documents.Count == 0) { <p class="text-sm text-slate-600">No documents linked yet.</p> }
+        </div>
+        @if (editable)
+        {
+            <form asp-action="AttachDocument" method="post" class="mt-4 space-y-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                <input type="hidden" name="tenderApplicationId" value="@app.TenderApplicationId" />
+                <label for="documentId" class="text-xs font-bold text-blue-950">Choose a file with stored content</label>
+                <select id="documentId" name="documentId" required class="block w-full rounded-xl border border-blue-200 px-3 py-2 text-sm">
+                    <option value="">Select a vault document</option>
+                    @foreach (var doc in Model.AvailableDocuments) { <option value="@doc.Value">@doc.Text</option> }
+                </select>
+                <button type="submit" class="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white">Link selected document</button>
+                <a asp-controller="Documents" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="block text-xs font-semibold text-blue-700">Open Document Vault →</a>
+            </form>
+        }
+    </section>
+</div>
+<section class="mt-6 rounded-2xl border border-blue-100 bg-white p-6">
+    <h2 class="text-lg font-extrabold text-blue-950">Report your external submission</h2>
+    <p class="mt-2 text-sm text-slate-600">SparkVenture does not send applications to the publisher. Only mark this submitted after you've actually completed the external process. Demo opportunities are not real tenders.</p>
+    @if (editable)
+    {
+        <form asp-action="ReportSubmitted" method="post" class="mt-4 space-y-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="businessId" value="@Model.BusinessId" />
+            <input type="hidden" name="tenderApplicationId" value="@app.TenderApplicationId" />
+            <label class="flex items-start gap-2 text-sm text-blue-950">
+                <input type="checkbox" name="confirmedExternalSubmission" value="true" required class="mt-1" />
+                I confirm I personally submitted this tender through the original publisher's official process.
+            </label>
+            <button type="submit" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Record external submission</button>
+        </form>
+    }
+    else if (Model.CanManage && app.Status == "Submitted")
+    {
+        <p class="mt-2 text-sm text-slate-600">Submitted (self-reported) at @(app.SubmittedAtUtc?.ToString("dd MMM yyyy HH:mm 'UTC'") ?? "unknown time").</p>
+        <form asp-action="ReportOutcome" method="post" class="mt-4 flex flex-wrap gap-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="businessId" value="@Model.BusinessId" />
+            <input type="hidden" name="tenderApplicationId" value="@app.TenderApplicationId" />
+            <select name="outcome" required class="rounded-xl border border-blue-200 px-3 py-2 text-sm">
+                <option value="">Select reported outcome</option>
+                <option value="Awarded">Awarded</option>
+                <option value="Unsuccessful">Unsuccessful</option>
+                <option value="Withdrawn">Withdrawn</option>
+            </select>
+            <button type="submit" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Save reported outcome</button>
+        </form>
+    }
+    else { <p class="mt-3 text-sm text-slate-600">Current status: @app.Status</p> }
+</section>

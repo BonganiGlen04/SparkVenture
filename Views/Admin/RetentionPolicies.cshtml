@@ -1,0 +1,6 @@
+@model System.Collections.Generic.List<SparkVenture.ViewModels.AdminRetentionRowVm>
+@{ ViewData["Title"]="Retention policies"; Layout="_AdminLayout"; }
+<a asp-action="Index" class="text-sm font-bold text-blue-700">← Administration</a>
+<h1 class="mt-4 text-3xl font-extrabold text-blue-950">Retention policy register</h1>
+<p class="mt-2 mb-5 text-sm text-slate-600">Read-only policy configuration from SQL Server. These rows do <strong>not</strong> automatically archive or delete data. Build a reviewed, logged retention job before enforcing them.</p>
+<div class="overflow-x-auto rounded-2xl border border-blue-100 bg-white"><table class="min-w-full text-left text-sm"><thead class="bg-blue-50"><tr><th class="p-4">Entity</th><th class="p-4">Days</th><th class="p-4">Configured action</th><th class="p-4">Active</th></tr></thead><tbody class="divide-y divide-blue-50">@foreach(var row in Model){<tr><td class="p-4 font-bold text-blue-950">@row.EntityType</td><td class="p-4">@row.RetentionDays</td><td class="p-4">@row.Action</td><td class="p-4">@(row.IsActive?"Yes":"No")</td></tr>}</tbody></table></div>

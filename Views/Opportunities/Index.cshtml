@@ -1,0 +1,64 @@
+@model SparkVenture.ViewModels.OpportunitiesIndexVm
+@{
+    ViewData["Title"] = "Business Opportunities";
+    Layout = "_DashboardLayout";
+}
+<div class="mb-7 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Markets & Growth</p>
+        <h1 class="mt-1 text-3xl font-extrabold text-blue-950">Opportunities</h1>
+        <p class="mt-2 text-sm text-slate-600">Find opportunities to explore for <strong>@Model.BusinessName</strong>.</p>
+    </div>
+    <a asp-controller="OpportunityTracking" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+       class="rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50">Tracking & deadlines</a>
+</div>
+<div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+    <strong>Development data notice:</strong> Opportunities marked Demo come from SparkVenture's SQL seed and are not verified live tenders. Check the original publisher, requirements and deadlines independently before taking action.
+</div>
+<div class="mb-6 flex flex-wrap gap-2">
+    <a asp-controller="Recommendations" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">My matches</a>
+    <a asp-controller="SavedOpportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700">Saved opportunities</a>
+    <a asp-controller="TenderApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700">Tender preparation</a>
+</div>
+<form method="get" asp-action="Index" class="mb-6 grid gap-3 rounded-2xl border border-blue-100 bg-white p-5 sm:grid-cols-4">
+    <input type="hidden" name="businessId" value="@Model.BusinessId" />
+    <div class="sm:col-span-2"><label for="search" class="text-xs font-bold text-blue-950">Search</label>
+        <input id="search" name="search" value="@Model.Search" maxlength="100" placeholder="Sector, tender or programme" class="mt-1 w-full rounded-xl border border-blue-200 px-3 py-2" /></div>
+    <div><label for="type" class="text-xs font-bold text-blue-950">Type</label>
+        <select id="type" name="type" class="mt-1 w-full rounded-xl border border-blue-200 px-3 py-2">
+            @foreach (var value in new[] { "All", "Tender", "Grant", "Loan", "Incubation", "Competition", "Mentorship" })
+            { <option value="@value" selected="@(Model.Type == value)">@value</option> }
+        </select></div>
+    <div><label for="state" class="text-xs font-bold text-blue-950">Availability</label>
+        <select id="state" name="state" class="mt-1 w-full rounded-xl border border-blue-200 px-3 py-2">
+            @foreach (var value in new[] { "Open", "Upcoming", "All" })
+            { <option value="@value" selected="@(Model.State == value)">@value</option> }
+        </select></div>
+    <button type="submit" class="rounded-xl bg-blue-950 px-4 py-2 text-sm font-semibold text-white sm:col-span-4">Apply filters</button>
+</form>
+@if (Model.Opportunities.Count == 0)
+{
+    <div class="rounded-2xl border border-blue-100 bg-white p-10 text-center text-slate-600">No opportunities match these filters. Try a broader search.</div>
+}
+else
+{
+    <div class="grid gap-4 lg:grid-cols-2">
+        @foreach (var opportunity in Model.Opportunities)
+        {
+            <article class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+                <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
+                    <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-700">@opportunity.Type</span>
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-600">@opportunity.Status</span>
+                    @if (opportunity.IsDemo) { <span class="rounded-full bg-amber-100 px-3 py-1 text-amber-900">Demo data</span> }
+                    @if (opportunity.IsSaved) { <span class="rounded-full bg-green-50 px-3 py-1 text-green-700">Saved</span> }
+                </div>
+                <h2 class="mt-3 text-lg font-extrabold text-blue-950">@opportunity.Title</h2>
+                <p class="mt-2 line-clamp-3 text-sm text-slate-600">@opportunity.Description</p>
+                <p class="mt-3 text-xs text-slate-500">Source: @opportunity.SourceName</p>
+                <p class="mt-1 text-xs text-slate-500">Deadline: @(opportunity.ClosesAtUtc?.ToString("dd MMM yyyy HH:mm") ?? "Not specified") UTC</p>
+                <a asp-action="Details" asp-route-businessId="@Model.BusinessId" asp-route-id="@opportunity.OpportunityId"
+                   class="mt-4 inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700">View details →</a>
+            </article>
+        }
+    </div>
+}

@@ -46,6 +46,45 @@
                 Company Registration
             </a>
 
+            <a asp-controller="Cashbook" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="inline-flex items-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">
+                Open Cashbook
+            </a>
+            <a asp-controller="Customers" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Customers</a>
+            <a asp-controller="Invoices" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Invoices</a>
+            <a asp-controller="Payments" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Payments</a>
+            <a asp-controller="FinanceInsights" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Financial insights</a>
+            
+            <div class="mt-6 flex flex-wrap gap-3">
+                <a asp-controller="Opportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                   class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white">Find opportunities</a>
+                <a asp-controller="Recommendations" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">My matches</a>
+                <a asp-controller="SavedOpportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Saved</a>
+                <a asp-controller="TenderApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Tender preparation</a>
+                <a asp-controller="OpportunityTracking" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+                   class="rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700">Tracking</a>
+            </div>
+            
+            <a asp-controller="FundingProviders" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="inline-flex rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
+                Funding Providers
+            </a>
+            <a asp-controller="FundingReadiness" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="inline-flex rounded-xl border border-blue-200 px-4 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">
+                Funding Readiness
+            </a>
+            <a asp-controller="FundingApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId"
+               class="inline-flex rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700">
+                Funding Applications
+            </a>
+
         </div>
     </div>
 </div>

@@ -1,0 +1,41 @@
+@model SparkVenture.ViewModels.CashbookCreateViewModel
+@{
+    ViewData["Title"] = "New Cashbook Entry";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-semibold text-blue-600 hover:text-blue-800">← Back to Cashbook</a>
+<div class="mt-5 max-w-2xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm sm:p-8">
+    <p class="text-xs font-bold uppercase tracking-widest text-blue-600">@Model.BusinessName</p>
+    <h1 class="mt-2 text-2xl font-extrabold text-blue-950">Record money in or out</h1>
+    <p class="mt-2 text-sm text-slate-600">Use this only for money you've actually received or paid. Invoiced amounts are not automatically cash received.</p>
+    <form asp-action="Create" method="post" class="mt-6 space-y-5">
+        @Html.AntiForgeryToken()
+        <input asp-for="BusinessId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-sm text-red-600"></div>
+        <div>
+            <label asp-for="Direction" class="mb-1 block text-sm font-semibold text-blue-950">Transaction type</label>
+            <select asp-for="Direction" id="direction" class="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm">
+                <option value="In">Money received (income)</option>
+                <option value="Out">Money paid (expense)</option>
+            </select><span asp-validation-for="Direction" class="text-xs text-red-600"></span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div><label asp-for="Amount" class="mb-1 block text-sm font-semibold text-blue-950">Amount (ZAR)</label><input asp-for="Amount" type="number" min="0.01" max="999999999.99" step="0.01" class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sm" /><span asp-validation-for="Amount" class="text-xs text-red-600"></span></div>
+            <div><label asp-for="EntryDate" class="mb-1 block text-sm font-semibold text-blue-950">Transaction date</label><input asp-for="EntryDate" type="date" class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sm" /><span asp-validation-for="EntryDate" class="text-xs text-red-600"></span></div>
+        </div>
+        <div id="categoryPanel"><label asp-for="ExpenseCategoryId" class="mb-1 block text-sm font-semibold text-blue-950">Expense category</label><select asp-for="ExpenseCategoryId" asp-items="Model.Categories" class="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm"><option value="">Choose category</option></select><span asp-validation-for="ExpenseCategoryId" class="text-xs text-red-600"></span></div>
+        <div><label asp-for="Description" class="mb-1 block text-sm font-semibold text-blue-950">Description</label><input asp-for="Description" maxlength="200" placeholder="e.g. Payment for catering order" class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sm" /><span asp-validation-for="Description" class="text-xs text-red-600"></span></div>
+        <div><label asp-for="Reference" class="mb-1 block text-sm font-semibold text-blue-950">Reference (optional)</label><input asp-for="Reference" maxlength="50" placeholder="e.g. Receipt / EFT reference" class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sm" /><span asp-validation-for="Reference" class="text-xs text-red-600"></span></div>
+        <div class="flex flex-wrap gap-3 pt-2"><button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700">Save transaction</button><a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-xl border border-blue-200 px-6 py-3 text-sm font-semibold text-blue-700 hover:bg-blue-50">Cancel</a></div>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+    const typeSelect = document.getElementById('direction');
+    const categoryPanel = document.getElementById('categoryPanel');
+    function syncType() { categoryPanel.hidden = typeSelect.value !== 'Out'; }
+    typeSelect.addEventListener('change', syncType);
+    syncType();
+    </script>
+}

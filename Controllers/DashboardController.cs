@@ -29,6 +29,13 @@ public sealed class DashboardController : Controller
     [HttpGet]
     public async Task<IActionResult> Index(Guid? businessId)
     {
+
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Admin");
+        }
+
+
         if (!Guid.TryParse(_userManager.GetUserId(User), out var userId))
             return Challenge();
 
@@ -102,6 +109,7 @@ public sealed class DashboardController : Controller
         var cashflowRows = await _db.CashbookEntries.AsNoTracking()
             .Where(e => e.BusinessId == id
                         && e.Status == "Posted"
+                        && e.EntryType != "Reversal"
                         && e.EntryDate >= firstChartMonthStart
                         && e.EntryDate < nextMonthStart)
             .GroupBy(e => new { e.EntryDate.Year, e.EntryDate.Month, e.Direction })

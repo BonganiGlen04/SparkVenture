@@ -1,0 +1,31 @@
+@model SparkVenture.ViewModels.FundingApplicationCreateVm
+@{
+    ViewData["Title"] = "New Funding Application";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-bold text-blue-700">← Funding applications</a>
+<div class="mx-auto mt-5 max-w-2xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+    <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Funding · Local draft</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-blue-950">Prepare a funding request</h1>
+    <p class="mt-2 text-sm text-slate-600">@Model.BusinessName · This creates a record in SparkVenture; it does not apply to a funder.</p>
+    <form asp-action="Create" method="post" class="mt-6 space-y-5">
+        @Html.AntiForgeryToken()
+        <input asp-for="BusinessId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-sm text-red-700"></div>
+        <div>
+            <label asp-for="FundingProviderId" class="block text-sm font-bold text-blue-950">Provider</label>
+            <select asp-for="FundingProviderId" asp-items="Model.ProviderOptions" class="mt-2 block w-full rounded-xl border border-blue-200 px-4 py-3 text-sm">
+                <option value="">Choose a provider</option>
+            </select>
+            <span asp-validation-for="FundingProviderId" class="text-xs text-red-700"></span>
+        </div>
+        <div>
+            <label asp-for="RequestedAmount" class="block text-sm font-bold text-blue-950">Requested amount (ZAR)</label>
+            <input asp-for="RequestedAmount" type="number" step="0.01" min="100" max="1000000000" class="mt-2 block w-full rounded-xl border border-blue-200 px-4 py-3 text-sm" />
+            <span asp-validation-for="RequestedAmount" class="text-xs text-red-700"></span>
+        </div>
+        <p class="rounded-xl bg-amber-50 p-4 text-xs text-amber-900">Check the funder's real eligibility rules, application window and fees directly. The seed data can contain demonstration providers.</p>
+        <button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white">Save local draft</button>
+    </form>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,65 @@
+@model SparkVenture.ViewModels.AuditLogsIndexVm
+@{
+    ViewData["Title"] = "Audit logs";
+    Layout = "_AdminLayout";
+}
+<a asp-controller="Admin" asp-action="Index" class="text-sm font-bold text-blue-700 hover:underline">← Administration</a>
+<h1 class="mt-4 text-3xl font-extrabold text-blue-950">Platform activity</h1>
+<p class="mt-2 text-sm text-slate-600">See who performed each action, which business was affected, and the related record. Audit IDs remain stored securely for traceability but aren't shown in this summary.</p>
+<form asp-action="Index" method="get" class="mt-5 flex flex-wrap gap-3">
+    <input type="search" name="actionFilter" maxlength="80" value="@Model.ActionFilter"
+           placeholder="Filter activity code, e.g. invoice."
+           class="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm sm:w-80" />
+    <button type="submit" class="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white">Filter</button>
+</form>
+<p class="mt-3 text-xs text-slate-500">@Model.TotalRows event(s) · Page @Model.Page</p>
+<div class="mt-4 overflow-x-auto rounded-2xl border border-blue-100 bg-white shadow-sm">
+    <table class="min-w-full text-left text-sm">
+        <thead class="bg-blue-50 text-blue-950">
+            <tr>
+                <th class="p-4">When (UTC)</th>
+                <th class="p-4">Activity</th>
+                <th class="p-4">Related record</th>
+                <th class="p-4">Performed by</th>
+                <th class="p-4">Business</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-blue-50">
+            @foreach (var row in Model.Rows)
+            {
+                <tr>
+                    <td class="whitespace-nowrap p-4 text-slate-600">@row.OccurredAtUtc.ToString("dd MMM yyyy HH:mm")</td>
+                    <td class="p-4 font-bold text-blue-950">@row.ActionDescription</td>
+                    <td class="p-4">
+                        <span class="font-semibold text-blue-950">@row.EntityDescription</span>
+                        <p class="mt-1 text-xs text-slate-500">@SparkVenture.Infrastructure.AdminDisplayLookup.EntityTypeLabel(row.EntityType)</p>
+                    </td>
+                    <td class="p-4">
+                        <span class="font-semibold text-blue-950">@row.ActorName</span>
+                        @if (!string.IsNullOrWhiteSpace(row.ActorEmail) && row.ActorName != row.ActorEmail)
+                        {
+                            <p class="mt-1 text-xs text-slate-500">@row.ActorEmail</p>
+                        }
+                    </td>
+                    <td class="p-4 text-slate-700">@row.BusinessName</td>
+                </tr>
+            }
+            @if (Model.Rows.Count == 0)
+            {
+                <tr><td colspan="5" class="p-5 text-slate-500">No matching activity.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="mt-4 flex gap-3">
+    @if (Model.Page > 1)
+    {
+        <a asp-action="Index" asp-route-page="@(Model.Page - 1)" asp-route-actionFilter="@Model.ActionFilter"
+           class="rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700">← Previous</a>
+    }
+    @if (Model.Page * Model.PageSize < Model.TotalRows)
+    {
+        <a asp-action="Index" asp-route-page="@(Model.Page + 1)" asp-route-actionFilter="@Model.ActionFilter"
+           class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Next →</a>
+    }
+</div>

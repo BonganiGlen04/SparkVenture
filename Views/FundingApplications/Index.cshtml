@@ -1,0 +1,46 @@
+@model SparkVenture.ViewModels.FundingApplicationsIndexVm
+@{
+    ViewData["Title"] = "Funding Applications";
+    Layout = "_DashboardLayout";
+}
+<div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Funding · E4/E5</p>
+        <h1 class="mt-2 text-3xl font-extrabold text-blue-950">Funding applications</h1>
+        <p class="mt-2 text-sm text-slate-600">@Model.BusinessName · Local drafts and self-reported external outcomes.</p>
+    </div>
+    @if (Model.CanManage)
+    {
+        <a asp-action="Create" asp-route-businessId="@Model.BusinessId" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white">+ New funding draft</a>
+    }
+</div>
+<div class="mb-5 flex flex-wrap gap-3 text-sm font-bold">
+    <a asp-controller="FundingProviders" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-blue-700">Browse providers</a>
+    <span class="text-blue-200">·</span>
+    <a asp-controller="FundingReadiness" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-blue-700">Readiness checklist</a>
+</div>
+<div class="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+    @if (!Model.Applications.Any())
+    {
+        <div class="p-12 text-center">
+            <h2 class="text-xl font-bold text-blue-950">No funding applications yet</h2>
+            <p class="mt-2 text-sm text-slate-600">Start a local draft to organise the amount you want to request and any supporting documents.</p>
+        </div>
+    }
+    else
+    {
+        <div class="divide-y divide-blue-100">
+            @foreach (var a in Model.Applications)
+            {
+                <div class="flex flex-wrap items-center justify-between gap-3 p-5">
+                    <div>
+                        <p class="font-bold text-blue-950">@a.ProviderName</p>
+                        <p class="mt-1 text-xs text-slate-500">R @a.RequestedAmount.ToString("N2") · Created @a.CreatedAtUtc.ToString("dd MMM yyyy") UTC</p>
+                        <span class="mt-2 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">@a.Status (local/self-reported)</span>
+                    </div>
+                    <a asp-action="Details" asp-route-businessId="@Model.BusinessId" asp-route-id="@a.FundingApplicationId" class="rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700">Open →</a>
+                </div>
+            }
+        </div>
+    }
+</div>

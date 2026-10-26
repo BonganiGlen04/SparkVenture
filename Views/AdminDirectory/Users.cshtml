@@ -1,0 +1,53 @@
+@model SparkVenture.ViewModels.AdminUsersIndexVm
+@{
+    ViewData["Title"] = "Platform users";
+    Layout = "_AdminLayout";
+    var totalPages = Math.Max(1, (int)Math.Ceiling((double)Model.Total / Model.PageSize));
+}
+<a asp-controller="Admin" asp-action="Index" class="text-sm font-bold text-blue-700 hover:underline">← Admin dashboard</a>
+<div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+    <div>
+        <h1 class="text-3xl font-extrabold text-blue-950">Platform users</h1>
+        <p class="mt-2 text-sm text-slate-600">@Model.Total account(s) · Read-only directory, restricted to platform admins</p>
+    </div>
+</div>
+<form method="get" asp-action="Users" class="mt-6 flex max-w-lg gap-2">
+    <input type="search" name="search" value="@Model.Search" maxlength="100" placeholder="Search account email or username"
+           class="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:border-blue-500" />
+    <button class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Search</button>
+</form>
+<div class="mt-6 overflow-x-auto rounded-2xl border border-blue-100 bg-white shadow-sm">
+    <table class="min-w-full text-left text-sm">
+        <thead class="bg-blue-50 text-blue-950"><tr><th class="p-4">Name</th><th class="p-4">Email / username</th><th class="p-4">Platform role</th><th class="p-4">Email confirmed</th></tr></thead>
+        <tbody class="divide-y divide-blue-50">
+            @foreach (var account in Model.Rows)
+            {
+                <tr>
+                    <td class="p-4 font-semibold text-blue-950">@account.DisplayName</td>
+                    <td class="p-4 text-slate-600">@account.Email</td>
+                    <td class="p-4 text-slate-700">@account.Roles</td>
+                    <td class="p-4">@(account.EmailConfirmed ? "Yes" : "No")</td>
+                </tr>
+            }
+            @if (Model.Rows.Count == 0)
+            {
+                <tr><td colspan="4" class="p-6 text-sm text-slate-500">No matching accounts.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="mt-5 flex items-center justify-between gap-2 text-sm">
+    <span class="text-slate-600">Page @Model.Page of @totalPages</span>
+    <div class="flex gap-2">
+        @if (Model.Page > 1)
+        {
+            <a asp-action="Users" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)"
+               class="rounded-lg border border-blue-200 px-3 py-2 font-semibold text-blue-700">Previous</a>
+        }
+        @if (Model.Page < totalPages)
+        {
+            <a asp-action="Users" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)"
+               class="rounded-lg border border-blue-200 px-3 py-2 font-semibold text-blue-700">Next</a>
+        }
+    </div>
+</div>

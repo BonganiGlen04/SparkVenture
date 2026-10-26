@@ -1,0 +1,26 @@
+@model SparkVenture.ViewModels.CashbookCategoriesViewModel
+@{
+    ViewData["Title"] = "Expense Categories";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-semibold text-blue-600">← Back to Cashbook</a>
+<h1 class="mt-5 text-3xl font-extrabold text-blue-950">Expense Categories</h1>
+<p class="mt-2 text-sm text-slate-600">Choose from shared categories or create your own for @Model.BusinessName.</p>
+@if (TempData["SuccessMessage"] is string notice) { <div class="mt-5 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800">@notice</div> }
+@if (TempData["ErrorMessage"] is string error) { <div class="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-800">@error</div> }
+<div class="mt-6 grid gap-5 lg:grid-cols-2">
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"><h2 class="text-lg font-bold text-blue-950">Available categories</h2><div class="mt-4 divide-y divide-blue-50">
+        @foreach (var c in Model.Categories)
+        { <div class="flex items-center justify-between gap-3 py-3"><div><p class="text-sm font-semibold text-blue-950">@c.Name</p><p class="text-xs text-slate-500">@c.Code</p></div><span class="rounded-full bg-blue-50 px-3 py-1 text-xs text-blue-700">@(c.IsGlobal ? "Shared" : "Your business")</span></div> }
+    </div></div>
+    @if (Model.CanEdit)
+    {
+        <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"><h2 class="text-lg font-bold text-blue-950">Add an expense category</h2>
+            <form asp-action="AddCategory" method="post" class="mt-5 space-y-4">@Html.AntiForgeryToken()<input type="hidden" name="BusinessId" value="@Model.BusinessId" />
+                <div><label for="NewCategoryName" class="mb-1 block text-sm font-bold text-blue-950">Category name</label><input id="NewCategoryName" name="NewCategoryName" maxlength="100" required class="w-full rounded-xl border border-blue-200 p-3 text-sm" placeholder="e.g. Packaging" /></div>
+                <div><label for="NewCategoryCode" class="mb-1 block text-sm font-bold text-blue-950">Code</label><input id="NewCategoryCode" name="NewCategoryCode" maxlength="30" pattern="[A-Za-z0-9_-]+" required class="w-full rounded-xl border border-blue-200 p-3 text-sm" placeholder="e.g. PACKAGING" /></div>
+                <button class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700" type="submit">Save category</button>
+            </form>
+        </div>
+    }
+</div>

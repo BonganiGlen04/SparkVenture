@@ -1,0 +1,14 @@
+@model SparkVenture.ViewModels.PaymentRecordVm
+@{ ViewData["Title"] = "Record payment"; Layout = "_DashboardLayout"; }
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-bold text-blue-600">← Payments</a>
+<div class="mt-5 max-w-2xl rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+<h1 class="text-2xl font-extrabold text-blue-950">Record money received</h1><p class="mt-2 text-sm text-slate-600">Only use this after confirming the funds actually arrived. A receipt is allocated to one invoice and written into your Cashbook automatically.</p>
+<form asp-action="Record" method="post" class="mt-6 space-y-5">@Html.AntiForgeryToken()<input asp-for="BusinessId" type="hidden"/><div asp-validation-summary="All" class="text-sm text-red-700"></div>
+<div><label asp-for="InvoiceId" class="mb-1 block text-sm font-bold">Invoice</label><select asp-for="InvoiceId" asp-items="Model.Invoices" class="w-full rounded-xl border border-blue-200 p-3"><option value="">Choose an unpaid invoice</option></select><span asp-validation-for="InvoiceId" class="text-xs text-red-700"></span></div>
+<div><label asp-for="Amount" class="mb-1 block text-sm font-bold">Amount received (R)</label><input asp-for="Amount" type="number" min="0.01" step="0.01" class="w-full rounded-xl border border-blue-200 p-3"/><span asp-validation-for="Amount" class="text-xs text-red-700"></span></div>
+<div><label asp-for="PaymentMethod" class="mb-1 block text-sm font-bold">Method</label><select asp-for="PaymentMethod" class="w-full rounded-xl border border-blue-200 p-3"><option value="EFT">Bank transfer / EFT</option><option value="Cash">Cash</option><option value="Card">Card received externally</option><option value="Mobile">Mobile payment received externally</option></select></div>
+<div><label asp-for="Reference" class="mb-1 block text-sm font-bold">Unique receipt reference</label><input asp-for="Reference" maxlength="50" class="w-full rounded-xl border border-blue-200 p-3" placeholder="BANK-STATEMENT-004"/><span asp-validation-for="Reference" class="text-xs text-red-700"></span></div>
+<div><label asp-for="ReceivedOn" class="mb-1 block text-sm font-bold">Date money arrived</label><input asp-for="ReceivedOn" type="date" class="w-full rounded-xl border border-blue-200 p-3"/><span asp-validation-for="ReceivedOn" class="text-xs text-red-700"></span></div>
+<label class="flex items-start gap-3 rounded-xl bg-amber-50 p-4 text-sm"><input asp-for="ConfirmReceived" type="checkbox" class="mt-1 h-5 w-5"/><span><strong>I confirm these funds were received.</strong> I understand SparkVenture is recording a payment, not collecting one.</span></label><span asp-validation-for="ConfirmReceived" class="text-xs text-red-700"></span>
+<button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 font-bold text-white">Record and allocate payment</button>
+</form></div>

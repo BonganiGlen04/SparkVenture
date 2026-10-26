@@ -1,7 +1,90 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model SparkVenture.ViewModels.AdminOverviewVm
 @{
+    ViewData["Title"] = "Admin dashboard";
+    Layout = "_AdminLayout";
 }
+<div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Administration overview</p>
+        <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl">Platform Dashboard</h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            Oversee platform activity, handle governance requests, and manage configuration.
+            This is your staff workspace—not an entrepreneur business account.
+        </p>
+    </div>
+    <a asp-controller="AuditLogs" asp-action="Index"
+       class="rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">Review audit logs</a>
+</div>
 
-<h1>Admin Dashboard</h1>
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-xs font-bold text-slate-500">Platform users</p>
+        <p class="mt-2 text-3xl font-extrabold text-blue-950">@Model.UserCount</p>
+        <a asp-controller="AdminDirectory" asp-action="Users" class="mt-2 inline-flex text-xs font-bold text-blue-700 hover:underline">Browse accounts →</a>
+    </div>
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-xs font-bold text-slate-500">Business profiles</p>
+        <p class="mt-2 text-3xl font-extrabold text-blue-950">@Model.BusinessCount</p>
+        <a asp-controller="AdminDirectory" asp-action="Businesses" class="mt-2 inline-flex text-xs font-bold text-blue-700 hover:underline">Browse business profiles →</a>
+    </div>
+    <div class="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+        <p class="text-xs font-bold text-slate-500">Privacy requests needing review</p>
+        <p class="mt-2 text-3xl font-extrabold text-amber-700">@Model.PendingRequestCount</p>
+        <a asp-action="PrivacyRequests" class="mt-2 inline-flex text-xs font-bold text-blue-700 hover:underline">Open review queue →</a>
+    </div>
+    <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+        <p class="text-xs font-bold text-slate-500">Audit events</p>
+        <p class="mt-2 text-3xl font-extrabold text-blue-950">@Model.AuditCount</p>
+        <p class="mt-2 text-xs text-slate-500">Recorded platform activities</p>
+    </div>
+</div>
+
+<div class="mt-8 grid gap-6 lg:grid-cols-3">
+    <section class="lg:col-span-2">
+        <div class="mb-4 flex items-center justify-between gap-3">
+            <h2 class="text-xl font-extrabold text-blue-950">Administration tools</h2>
+            <span class="text-xs font-semibold text-slate-500">Phase F</span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <a asp-action="PrivacyRequests" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md">
+                <h3 class="font-bold text-blue-950">Privacy request queue</h3>
+                <p class="mt-2 text-sm leading-5 text-slate-600">Assign and review data access, correction, or deletion requests without claiming automatic fulfilment.</p>
+            </a>
+            <a asp-controller="AuditLogs" asp-action="Index" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md">
+                <h3 class="font-bold text-blue-950">Audit trail</h3>
+                <p class="mt-2 text-sm leading-5 text-slate-600">Inspect read-only, searchable activity history.</p>
+            </a>
+            <a asp-action="References" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md">
+                <h3 class="font-bold text-blue-950">Reference values</h3>
+                <p class="mt-2 text-sm leading-5 text-slate-600">Maintain labels and display order for the platform's shared selections.</p>
+            </a>
+            <a asp-action="Sectors" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md">
+                <h3 class="font-bold text-blue-950">Business sectors</h3>
+                <p class="mt-2 text-sm leading-5 text-slate-600">Manage sector labels and descriptions.</p>
+            </a>
+            <a asp-action="PrivacyNotices" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md">
+                <h3 class="font-bold text-blue-950">Privacy notices</h3>
+                <p class="mt-2 text-sm leading-5 text-slate-600">Publish an approved new notice while preserving earlier versions.</p>
+            </a>
+            <a asp-action="RetentionPolicies" class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md">
+                <h3 class="font-bold text-blue-950">Retention policies</h3>
+                <p class="mt-2 text-sm leading-5 text-slate-600">Read the policy register. Data is not automatically deleted.</p>
+            </a>
+        </div>
+    </section>
+    <aside class="rounded-2xl border border-blue-100 bg-blue-50 p-6 shadow-sm">
+        <h2 class="text-lg font-extrabold text-blue-950">Administration checklist</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Before opening SparkVenture to real customers:</p>
+        <ul class="mt-4 space-y-3 text-sm text-slate-700">
+            <li>• Review all pending privacy requests.</li>
+            <li>• Publish a real, reviewed privacy notice; remove demo wording.</li>
+            <li>• Verify administrator accounts and test restricted routes.</li>
+            <li>• Check logs and security alerts before deployment.</li>
+        </ul>
+        <div class="mt-6 rounded-xl border border-blue-100 bg-white p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-blue-700">Reference records</p>
+            <p class="mt-1 text-2xl font-extrabold text-blue-950">@Model.ReferenceCount</p>
+            <p class="text-xs text-slate-500">Configured reference values</p>
+        </div>
+    </aside>
+</div>

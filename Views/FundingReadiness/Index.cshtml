@@ -1,0 +1,63 @@
+@model SparkVenture.ViewModels.FundingReadinessIndexVm
+@{
+    ViewData["Title"] = "Funding Readiness";
+    Layout = "_DashboardLayout";
+    var keys = new Dictionary<string,string> {
+        ["registered-with-cipc"] = "Registration",
+        ["has-bank-account"] = "BankAccount",
+        ["has-tax-compliance"] = "Tax",
+        ["keeps-financial-records"] = "Bookkeeping",
+        ["has-business-plan"] = "BusinessPlan"
+    };
+}
+<a asp-controller="FundingProviders" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-semibold text-blue-700">← Funding providers</a>
+<div class="mt-5 mb-6 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+    <p class="text-xs font-bold uppercase tracking-widest text-blue-600">Funding · E2/E3</p>
+    <h1 class="mt-2 text-3xl font-extrabold text-blue-950">Funding readiness checklist</h1>
+    <p class="mt-2 text-sm text-slate-600">@Model.BusinessName · Five preparation checks, based on your own answers.</p>
+    @if (Model.LastCheckedUtc.HasValue)
+    {
+        <div class="mt-5 rounded-xl bg-blue-50 p-4">
+            <p class="text-sm font-semibold text-blue-900">Last self-assessment · @Model.LastCheckedUtc.Value.ToString("dd MMM yyyy") UTC</p>
+            <p class="mt-1 text-3xl font-extrabold text-blue-950">@(Model.LastScore?.ToString("N0") ?? "—") / 100</p>
+            <p class="text-xs text-slate-600">Each confirmed Yes is worth 20 points. No/Not sure = 0. This is not a credit score or lender eligibility decision.</p>
+        </div>
+    }
+    @if (TempData["SuccessMessage"] is string message) { <p role="status" class="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">@message</p> }
+</div>
+<div class="grid gap-6 lg:grid-cols-3">
+    <section class="rounded-2xl border border-blue-100 bg-white p-6 lg:col-span-2">
+        <h2 class="text-xl font-extrabold text-blue-950">Your preparation questions</h2>
+        <form asp-action="Save" method="post" class="mt-5 space-y-5">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="BusinessId" value="@Model.BusinessId" />
+            @foreach (var q in Model.Questions)
+            {
+                <fieldset class="border-b border-blue-100 pb-5" disabled="@(!Model.CanManage)">
+                    <legend class="font-bold text-blue-950">@q.Label</legend>
+                    <p class="mt-1 text-xs text-slate-500">@q.Help</p>
+                    <div class="mt-3 flex flex-wrap gap-4 text-sm">
+                        @foreach (var answer in new[] { "Yes", "No", "NotSure" })
+                        {
+                            <label class="inline-flex items-center gap-2">
+                                <input type="radio" name="@keys[q.Key]" value="@answer" checked="@(q.Answer == answer)" required class="accent-blue-600" />
+                                @(answer == "NotSure" ? "Not sure" : answer)
+                            </label>
+                        }
+                    </div>
+                </fieldset>
+            }
+            @if (Model.CanManage) { <button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white">Save readiness assessment</button> }
+        </form>
+    </section>
+    <aside class="rounded-2xl border border-blue-100 bg-white p-6">
+        <h2 class="text-lg font-extrabold text-blue-950">What to improve</h2>
+        <p class="mt-2 text-xs text-slate-500">These suggestions are generated from your latest answers, not verified by a lender.</p>
+        <ul class="mt-4 list-disc space-y-3 pl-5 text-sm text-slate-700">
+            @foreach (var advice in Model.NextSteps) { <li>@advice</li> }
+            @if (!Model.LastCheckedUtc.HasValue) { <li>Complete the checklist to get tailored preparation actions.</li> }
+            @if (Model.LastCheckedUtc.HasValue && !Model.NextSteps.Any()) { <li>Your five self-reported checks are complete. Confirm additional requirements with each provider.</li> }
+        </ul>
+        <a asp-controller="FundingApplications" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="mt-5 inline-block text-sm font-bold text-blue-700">View application tracker →</a>
+    </aside>
+</div>

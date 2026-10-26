@@ -74,9 +74,24 @@ namespace SparkVenture.Data
         public DbSet<DataRetentionPolicy> DataRetentionPolicies => Set<DataRetentionPolicy>();
         public DbSet<DocumentContent> DocumentContents => Set<DocumentContent>();
 
+        public DbSet<RegistrationFinancialYearEnd> RegistrationFinancialYearEnds => Set<RegistrationFinancialYearEnd>();
+
+
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);  
+            base.OnModelCreating(builder);
+
+            builder.Entity<RegistrationFinancialYearEnd>(entity =>
+            {
+                entity.ToTable("RegistrationFinancialYearEnds");
+                entity.HasKey(x => x.RegistrationApplicationId);
+                entity.HasOne<RegistrationApplication>()
+                    .WithOne()
+                    .HasForeignKey<RegistrationFinancialYearEnd>(x => x.RegistrationApplicationId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
 
             builder.Entity<DocumentContent>(entity =>
             {

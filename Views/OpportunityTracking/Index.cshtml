@@ -1,0 +1,48 @@
+@model SparkVenture.ViewModels.OpportunityTrackingVm
+@{
+    ViewData["Title"] = "Opportunity Tracking";
+    Layout = "_DashboardLayout";
+    var now = DateTime.UtcNow;
+}
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div><p class="text-xs font-extrabold uppercase tracking-widest text-blue-600">Deadline & progress</p>
+        <h1 class="mt-1 text-3xl font-extrabold text-blue-950">Opportunity tracking</h1>
+        <p class="mt-2 text-sm text-slate-600">@Model.BusinessName · Deadline reminders are shown when you open this page.</p></div>
+    <a asp-controller="Opportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Browse opportunities</a>
+</div>
+<div class="mb-6 rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+    <p class="text-xs font-bold text-slate-500">Items with deadlines in the next 14 days</p>
+    <p class="mt-1 text-3xl font-extrabold text-blue-950">@Model.DueSoon</p>
+    <p class="mt-2 text-xs text-slate-500">May include an opportunity in both Saved and Tender Preparation. No emails or scheduled notifications are sent by this module.</p>
+</div>
+<section class="mb-6 rounded-2xl border border-blue-100 bg-white p-6">
+    <h2 class="mb-4 text-lg font-extrabold text-blue-950">Saved opportunities</h2>
+    <div class="divide-y divide-blue-50">
+        @foreach (var item in Model.Saved)
+        {
+            var remaining = item.Opportunity.ClosesAtUtc.HasValue ? (item.Opportunity.ClosesAtUtc.Value - now).Days : (int?)null;
+            <div class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+                <div><p class="font-bold text-blue-950">@item.Opportunity.Title</p>
+                    <p class="text-xs text-slate-500">@item.Opportunity.Status · Closes @(item.Opportunity.ClosesAtUtc?.ToString("dd MMM yyyy") ?? "date not given") · @(remaining is null ? "Deadline unknown" : remaining < 0 ? "Passed" : remaining + " days left")</p>
+                    @if (!string.IsNullOrWhiteSpace(item.Notes)) { <p class="mt-1 text-xs text-slate-600">Next step: @item.Notes</p> }
+                </div>
+                <a asp-controller="Opportunities" asp-action="Details" asp-route-businessId="@Model.BusinessId" asp-route-id="@item.Opportunity.OpportunityId" class="font-bold text-blue-700">Details →</a>
+            </div>
+        }
+        @if (Model.Saved.Count == 0) { <p class="py-4 text-sm text-slate-500">No saved opportunities.</p> }
+    </div>
+</section>
+<section class="rounded-2xl border border-blue-100 bg-white p-6">
+    <h2 class="mb-4 text-lg font-extrabold text-blue-950">Tender progress</h2>
+    <div class="divide-y divide-blue-50">
+        @foreach (var item in Model.Applications)
+        {
+            <div class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+                <div><p class="font-bold text-blue-950">@item.Title</p>
+                    <p class="text-xs text-slate-500">@item.Status · Deadline @(item.DeadlineUtc?.ToString("dd MMM yyyy") ?? "unknown")</p></div>
+                <a asp-controller="TenderApplications" asp-action="Details" asp-route-businessId="@Model.BusinessId" asp-route-id="@item.TenderApplicationId" class="font-bold text-blue-700">Track →</a>
+            </div>
+        }
+        @if (Model.Applications.Count == 0) { <p class="py-4 text-sm text-slate-500">No tender applications being tracked.</p> }
+    </div>
+</section>

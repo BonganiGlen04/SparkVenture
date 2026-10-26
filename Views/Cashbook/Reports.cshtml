@@ -1,0 +1,38 @@
+@model SparkVenture.ViewModels.CashbookReportViewModel
+@{
+    ViewData["Title"] = "Cashbook Summary";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-semibold text-blue-600 hover:text-blue-800">← Back to Cashbook</a>
+<h1 class="mt-5 text-3xl font-extrabold text-blue-950">Financial summary</h1>
+<p class="mt-2 text-sm text-slate-600">Last six months of recorded cash movements for @Model.BusinessName.</p>
+<div class="mt-6 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-blue-100 bg-white p-5"><p class="text-xs text-slate-500">Received</p><p class="mt-2 text-2xl font-extrabold text-emerald-700">R @Model.SixMonthIncome.ToString("N2")</p></div>
+    <div class="rounded-2xl border border-blue-100 bg-white p-5"><p class="text-xs text-slate-500">Paid</p><p class="mt-2 text-2xl font-extrabold text-red-700">R @Model.SixMonthExpenses.ToString("N2")</p></div>
+    <div class="rounded-2xl border border-blue-100 bg-white p-5"><p class="text-xs text-slate-500">Net movement</p><p class="mt-2 text-2xl font-extrabold text-blue-950">R @Model.SixMonthNet.ToString("N2")</p></div>
+</div>
+<div class="mt-6 grid gap-5 lg:grid-cols-2">
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"><h2 class="text-lg font-extrabold text-blue-950">Money in and out</h2><p class="mt-1 text-xs text-slate-500">Green = received · Blue = paid</p>
+        <div class="mt-5 space-y-5">
+            @foreach (var m in Model.Months)
+            {
+                <div>
+                    <div class="mb-2 flex justify-between gap-3 text-xs"><span class="font-semibold text-blue-950">@m.Month</span><span class="text-slate-600">Net R @m.Net.ToString("N2")</span></div>
+                    <div class="space-y-1"><div class="h-3 rounded-full bg-slate-100"><div class="h-3 rounded-full bg-emerald-500" style="width:@m.IncomeWidth%"></div></div><div class="h-3 rounded-full bg-slate-100"><div class="h-3 rounded-full bg-blue-500" style="width:@m.ExpensesWidth%"></div></div></div>
+                    <div class="mt-1 flex justify-between gap-3 text-xs text-slate-500"><span>In R @m.Income.ToString("N2")</span><span>Out R @m.Expenses.ToString("N2")</span></div>
+                </div>
+            }
+        </div>
+    </section>
+    <section class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm"><h2 class="text-lg font-extrabold text-blue-950">Expenses by category</h2>
+        @if (Model.ExpenseCategories.Count == 0) { <p class="mt-4 text-sm text-slate-600">No recorded expenses for this period.</p> }
+        else
+        {
+            <div class="mt-4 divide-y divide-blue-50">
+                @foreach (var c in Model.ExpenseCategories)
+                { <div class="flex justify-between gap-3 py-3 text-sm"><span class="font-semibold text-blue-950">@c.Category</span><span class="font-bold text-blue-950">R @c.Amount.ToString("N2")</span></div> }
+            </div>
+        }
+    </section>
+</div>
+<p class="mt-5 text-xs leading-5 text-slate-500">This is a cashbook summary, not an income statement, tax calculation, verified bank balance, or financial forecast. It includes only Posted non-reversal entries.</p>

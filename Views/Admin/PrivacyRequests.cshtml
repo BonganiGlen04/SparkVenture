@@ -1,0 +1,22 @@
+@model SparkVenture.ViewModels.AdminRequestsVm
+@{ ViewData["Title"]="Privacy request queue"; Layout="_AdminLayout"; }
+<a asp-action="Index" class="text-sm font-bold text-blue-700">← Administration</a>
+<h1 class="mt-4 text-3xl font-extrabold text-blue-950">Privacy requests</h1>
+<p class="mt-2 text-sm text-slate-600">Receive and assign requests; identity verification, fulfilment and secure response happen through your approved manual process. Clicking Start review never deletes data.</p>
+@if (TempData["SuccessMessage"] is string message) { <p role="status" class="mt-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">@message</p> }
+<div class="mt-5 overflow-x-auto rounded-2xl border border-blue-100 bg-white shadow-sm">
+<table class="min-w-full text-left text-sm">
+<thead class="bg-blue-50 text-blue-950"><tr><th class="p-4">Request</th><th class="p-4">Requester</th><th class="p-4">Status / assigned</th><th class="p-4">Internal follow-up</th><th class="p-4">Action</th></tr></thead>
+<tbody class="divide-y divide-blue-50">
+@foreach(var row in Model.Rows){
+<tr><td class="p-4"><strong>@row.RequestType</strong><p class="text-xs text-slate-500">@row.ReceivedAtUtc.ToString("dd MMM yyyy")</p></td>
+<td class="p-4"><span class="font-semibold text-blue-950">@row.RequesterName</span>
+@if (!string.IsNullOrWhiteSpace(row.RequesterEmail) && row.RequesterEmail != row.RequesterName) { <p class="text-xs text-slate-500">@row.RequesterEmail</p> }</td>
+<td class="p-4"><span class="font-bold text-blue-950">@row.Status</span><p class="text-xs text-slate-500">Assigned to: @row.AssignedToName</p></td>
+<td class="p-4 text-xs text-slate-600">@row.DueAtUtc.ToString("dd MMM yyyy") UTC</td>
+<td class="p-4">@if(row.Status=="Received"){
+<form asp-action="StartReview" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id" /><button class="rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white">Start review</button></form>
+} else { <span class="text-xs text-slate-500">Manual follow-up</span> }</td></tr>
+}
+@if (Model.Rows.Count==0){<tr><td colspan="5" class="p-6 text-slate-500">No requests recorded.</td></tr>}
+</tbody></table></div>

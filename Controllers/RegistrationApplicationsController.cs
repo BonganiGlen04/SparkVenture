@@ -14,11 +14,11 @@ using SparkVenture.ViewModels;
 namespace SparkVenture.Controllers;
 
 /// <summary>
-/// Phase B, Step 1: list, start, and view draft registration-preparation applications.
+/// Phase B1: list, start, and view draft registration-preparation applications. B2 in a separate partial file.
 /// This does NOT submit an application to CIPC.
 /// </summary>
 [Authorize]
-public sealed class RegistrationApplicationsController : Controller
+public sealed partial class RegistrationApplicationsController : Controller
 {
     private const string CompanyWorkflow = "CompanyRegistration";
     private readonly ApplicationDbContext _db;

@@ -1,0 +1,36 @@
+@model SparkVenture.ViewModels.PrivacyIndexVm
+@{ ViewData["Title"]="Your privacy choices"; Layout="_DashboardLayout"; }
+<p class="text-xs font-bold uppercase tracking-widest text-blue-600">Phase F · Account privacy</p>
+<h1 class="mt-2 text-3xl font-extrabold text-blue-950">Your privacy choices</h1>
+<p class="mt-2 text-sm text-slate-600">Review our published notice, record marketing consent and request access, correction or deletion review of your personal information.</p>
+@if(TempData["SuccessMessage"] is string message){<p role="status" class="mt-5 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800">@message</p>}
+<div class="mt-6 grid gap-5 lg:grid-cols-2">
+ <section class="rounded-2xl border border-blue-100 bg-white p-6">
+  <h2 class="text-xl font-bold text-blue-950">Privacy notice</h2>
+  <p class="mt-2 text-sm text-slate-600">Current version: <strong>@(string.IsNullOrEmpty(Model.Notice.VersionLabel)?"Not published":Model.Notice.VersionLabel)</strong></p>
+  @if(Model.Notice.IsDemoOrMissing){<p class="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">The available notice is demo/missing content. New marketing opt-ins are unavailable until a real, reviewed notice is published. Existing opt-ins can still be withdrawn.</p>}
+  <a asp-action="Notice" class="mt-3 inline-block text-sm font-bold text-blue-700">Read full privacy notice →</a>
+ </section>
+ <section class="rounded-2xl border border-blue-100 bg-white p-6">
+  <h2 class="text-xl font-bold text-blue-950">Marketing emails</h2>
+  <p class="mt-2 text-sm text-slate-600">Current choice: <strong>@(Model.MarketingChoice==true?"Opted in":Model.MarketingChoice==false?"Opted out":"Not recorded")</strong></p>
+  <p class="mt-2 text-xs text-slate-500">This choice is separate from essential service messages. The sending service must check this consent before marketing.</p>
+  <form asp-action="SaveMarketingChoice" method="post" class="mt-4 flex flex-wrap gap-3">
+   @Html.AntiForgeryToken()
+   <button name="allowMarketing" value="true" type="submit" disabled="@Model.Notice.IsDemoOrMissing" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white disabled:opacity-40">Allow marketing</button>
+   <button name="allowMarketing" value="false" type="submit" class="rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-800">Opt out</button>
+  </form>
+ </section>
+</div>
+<section class="mt-5 rounded-2xl border border-blue-100 bg-white p-6">
+<h2 class="text-xl font-bold text-blue-950">Personal information request</h2>
+<p class="mt-2 text-sm text-slate-600">Submit a request for manual review. This form does not automatically delete an account or export information; identity verification may be required before fulfilment.</p>
+<form asp-action="SubmitRequest" method="post" class="mt-4 flex flex-wrap items-end gap-3">
+ @Html.AntiForgeryToken()
+ <label class="text-sm font-semibold text-slate-700">Request type
+ <select name="RequestType" class="mt-1 block rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm"><option value="Access">Access my information</option><option value="Correction">Correct information</option><option value="Deletion">Request deletion review</option></select></label>
+ <button type="submit" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white">Submit request</button>
+</form>
+<h3 class="mt-7 text-sm font-bold text-blue-950">Your requests</h3>
+<div class="mt-3 overflow-x-auto"><table class="min-w-full text-left text-sm"><thead class="bg-blue-50"><tr><th class="p-3">Type</th><th class="p-3">Status</th><th class="p-3">Received</th><th class="p-3">Internal follow-up target</th></tr></thead><tbody class="divide-y divide-blue-50">@foreach(var row in Model.Requests){<tr><td class="p-3">@row.RequestType</td><td class="p-3 font-bold text-blue-950">@row.Status</td><td class="p-3">@row.ReceivedAtUtc.ToString("dd MMM yyyy")</td><td class="p-3">@row.DueAtUtc.ToString("dd MMM yyyy")</td></tr>}@if(Model.Requests.Count==0){<tr><td colspan="4" class="p-4 text-slate-500">No requests yet.</td></tr>}</tbody></table></div>
+</section>

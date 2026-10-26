@@ -1,0 +1,101 @@
+@model SparkVenture.ViewModels.FundingApplicationDetailsVm
+@{
+    ViewData["Title"] = "Funding Application Details";
+    Layout = "_DashboardLayout";
+    var a = Model.Application;
+    var canEdit = Model.CanManage && a.Status == "Draft";
+}
+<a asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-bold text-blue-700">← Funding applications</a>
+<div class="mt-5 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-center gap-3">
+        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">@a.Status · Local/self-reported</span>
+        @if (Model.IsDemoProvider) { <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900">Demo provider</span> }
+    </div>
+    <h1 class="mt-3 text-3xl font-extrabold text-blue-950">@a.ProviderName</h1>
+    <p class="mt-2 text-sm text-slate-600">Requested: R @a.RequestedAmount.ToString("N2") · Created @a.CreatedAtUtc.ToString("dd MMM yyyy") UTC</p>
+    @if (!string.IsNullOrEmpty(Model.WebsiteUrl) && !Model.IsDemoProvider)
+    {
+        <a href="@Model.WebsiteUrl" target="_blank" rel="noopener noreferrer" class="mt-4 inline-block rounded-xl border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700">Visit provider website</a>
+    }
+    @if (TempData["SuccessMessage"] is string message) { <p role="status" class="mt-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">@message</p> }
+</div>
+<div class="mt-6 grid gap-5 lg:grid-cols-2">
+    <section class="rounded-2xl border border-blue-100 bg-white p-6">
+        <h2 class="text-lg font-extrabold text-blue-950">Supporting documents</h2>
+        <p class="mt-2 text-xs text-slate-500">Files are linked from the selected business's Document Vault. Removing a link never removes source bytes.</p>
+        <div class="mt-4 space-y-3">
+            @foreach (var document in Model.Documents)
+            {
+                <div class="rounded-xl bg-blue-50 p-3">
+                    <p class="break-all text-sm font-bold text-blue-950">@document.FileName</p>
+                    <p class="mt-1 text-xs text-slate-500">@document.Purpose</p>
+                    @if (canEdit)
+                    {
+                        <form asp-action="RemoveDocument" method="post" class="mt-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                            <input type="hidden" name="fundingApplicationId" value="@a.FundingApplicationId" />
+                            <input type="hidden" name="fundingApplicationDocumentId" value="@document.FundingApplicationDocumentId" />
+                            <button type="submit" class="text-xs font-bold text-red-700">Remove link</button>
+                        </form>
+                    }
+                </div>
+            }
+            @if (!Model.Documents.Any()) { <p class="text-sm text-slate-600">No documents linked yet.</p> }
+        </div>
+        @if (canEdit)
+        {
+            <form asp-action="AttachDocument" method="post" class="mt-5 space-y-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                <input type="hidden" name="fundingApplicationId" value="@a.FundingApplicationId" />
+                <label for="documentId" class="block text-sm font-semibold text-blue-950">Choose a stored vault document</label>
+                <select id="documentId" name="documentId" required class="w-full rounded-xl border border-blue-200 px-3 py-2 text-sm">
+                    <option value="">Choose a document</option>
+                    @foreach (var choice in Model.AvailableDocuments) { <option value="@choice.Value">@choice.Text</option> }
+                </select>
+                <button type="submit" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Link document</button>
+            </form>
+            <a asp-controller="Documents" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="mt-4 inline-block text-sm font-bold text-blue-700">Open Document Vault →</a>
+        }
+    </section>
+    <section class="rounded-2xl border border-blue-100 bg-white p-6">
+        <h2 class="text-lg font-extrabold text-blue-950">External submission tracking</h2>
+        <p class="mt-2 text-sm text-slate-600">SparkVenture does not transmit applications to providers. Only report a submission or outcome that occurred through the real provider.</p>
+        @if (Model.IsDemoProvider)
+        {
+            <p class="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">This is a demo provider. Do not attempt a real funding application based on this listing.</p>
+        }
+        @if (canEdit && !Model.IsDemoProvider)
+        {
+            <form asp-action="ReportSubmitted" method="post" class="mt-4 space-y-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                <input type="hidden" name="fundingApplicationId" value="@a.FundingApplicationId" />
+                <label class="flex items-start gap-2 text-sm text-slate-700">
+                    <input type="checkbox" name="confirmedExternalSubmission" value="true" required class="mt-1" />
+                    I confirm I personally submitted this application outside SparkVenture.
+                </label>
+                <button type="submit" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Record external submission</button>
+            </form>
+        }
+        else if (Model.CanManage && (a.Status == "Submitted" || a.Status == "UnderReview"))
+        {
+            <form asp-action="ReportOutcome" method="post" class="mt-4 space-y-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                <input type="hidden" name="fundingApplicationId" value="@a.FundingApplicationId" />
+                <label for="reportedStatus" class="block text-sm font-semibold text-blue-950">Report status you received from provider</label>
+                <select id="reportedStatus" name="reportedStatus" required class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sm">
+                    <option value="">Select an outcome</option>
+                    <option value="UnderReview">Under review</option>
+                    <option value="Approved">Approved (self-reported)</option>
+                    <option value="Rejected">Rejected (self-reported)</option>
+                </select>
+                <button type="submit" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white">Update local tracker</button>
+            </form>
+        }
+        else { <p class="mt-4 text-sm text-slate-600">Current status: @a.Status</p> }
+        <a asp-controller="FundingReadiness" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="mt-6 inline-block text-sm font-bold text-blue-700">Review funding readiness →</a>
+    </section>
+</div>

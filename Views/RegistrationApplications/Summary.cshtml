@@ -1,0 +1,74 @@
+@model SparkVenture.ViewModels.RegistrationWizardSummaryViewModel
+@{
+    ViewData["Title"] = "Review Registration";
+    Layout = "_DashboardLayout";
+    var monthName = Model.YearEndMonth is >= 1 and <= 12
+        ? System.Globalization.CultureInfo.GetCultureInfo("en-ZA").DateTimeFormat.GetMonthName(Model.YearEndMonth.Value)
+        : "Not selected";
+}
+@await Html.PartialAsync("_WizardHeader", Model)
+@if (TempData["SuccessMessage"] is string msg)
+{
+    <div role="status" class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">@msg</div>
+}
+<div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-8">
+    <div class="mb-6">
+        <h2 class="text-xl font-extrabold text-blue-950">Review your saved answers</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Check your information. Use Edit to correct any section. This is an internal preparation review—not a submission to CIPC or to SparkVenture reviewers.</p>
+    </div>
+    <div class="space-y-5">
+        <section class="rounded-xl border border-blue-100 p-4">
+            <div class="flex justify-between gap-3"><h3 class="font-bold text-blue-950">1. Proposed names</h3><a asp-action="Step" asp-route-id="@Model.ApplicationId" asp-route-key="proposed-names" class="text-sm font-bold text-blue-600">Edit</a></div>
+            @if (Model.ProposedNames.Count == 0)
+            {
+                <p class="mt-2 text-sm text-slate-500">No names saved</p>
+            }
+            else
+            {
+                <ol class="mt-2 list-inside list-decimal space-y-1 text-sm text-slate-700">
+                    @foreach (var name in Model.ProposedNames)
+                    {
+                        <li>@name</li>
+                    }
+                </ol>
+            }
+        </section>
+        <section class="rounded-xl border border-blue-100 p-4">
+            <div class="flex justify-between gap-3"><h3 class="font-bold text-blue-950">2. Directors</h3><a asp-action="Step" asp-route-id="@Model.ApplicationId" asp-route-key="directors" class="text-sm font-bold text-blue-600">Edit</a></div>
+            <p class="mt-2 text-sm text-slate-700">@(Model.DirectorNames.Count == 0 ? "No directors saved" : string.Join(", ", Model.DirectorNames))</p>
+        </section>
+        <section class="rounded-xl border border-blue-100 p-4">
+            <div class="flex justify-between gap-3"><h3 class="font-bold text-blue-950">3. Shareholders</h3><a asp-action="Step" asp-route-id="@Model.ApplicationId" asp-route-key="shareholders" class="text-sm font-bold text-blue-600">Edit</a></div>
+            @if (Model.Shareholders.Count == 0)
+            {
+                <p class="mt-2 text-sm text-slate-500">No shareholders saved</p>
+            }
+            else
+            {
+                <ul class="mt-2 space-y-1 text-sm text-slate-700">
+                    @foreach (var item in Model.Shareholders)
+                    {
+                        <li>@item.Name — @item.Percentage.ToString("N2")%</li>
+                    }
+                </ul>
+            }
+        </section>
+        <section class="rounded-xl border border-blue-100 p-4">
+            <div class="flex justify-between gap-3"><h3 class="font-bold text-blue-950">4. Registered address</h3><a asp-action="Step" asp-route-id="@Model.ApplicationId" asp-route-key="addresses" class="text-sm font-bold text-blue-600">Edit</a></div>
+            <p class="mt-2 text-sm text-slate-700">@Model.RegisteredAddress</p>
+        </section>
+        <section class="rounded-xl border border-blue-100 p-4">
+            <div class="flex justify-between gap-3"><h3 class="font-bold text-blue-950">5. Financial year-end</h3><a asp-action="Step" asp-route-id="@Model.ApplicationId" asp-route-key="year-end" class="text-sm font-bold text-blue-600">Edit</a></div>
+            <p class="mt-2 text-sm text-slate-700">@monthName</p>
+        </section>
+    </div>
+    <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <strong>What's next?</strong> Your information is stored as a SparkVenture draft.
+        B3 will link supporting documents; B4 will add formal internal submission and review.
+        No official CIPC registration has taken place.
+    </div>
+    <div class="mt-6 flex flex-wrap justify-between gap-3">
+        <a asp-action="Step" asp-route-id="@Model.ApplicationId" asp-route-key="year-end" class="rounded-xl border border-blue-200 px-5 py-3 text-sm font-bold text-blue-700 hover:bg-blue-50">← Back to year-end</a>
+        <a asp-action="Details" asp-route-id="@Model.ApplicationId" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Finish B2 and view checklist →</a>
+    </div>
+</div>

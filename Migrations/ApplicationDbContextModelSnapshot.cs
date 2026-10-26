@@ -2290,6 +2290,19 @@ namespace SparkVenture.Migrations
                     b.ToTable("DocumentContents", (string)null);
                 });
 
+            modelBuilder.Entity("SparkVenture.Models.RegistrationFinancialYearEnd", b =>
+                {
+                    b.Property<Guid>("RegistrationApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("YearEndMonth")
+                        .HasColumnType("int");
+
+                    b.HasKey("RegistrationApplicationId");
+
+                    b.ToTable("RegistrationFinancialYearEnds", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("SparkVenture.Data.Models.ApplicationRole", null)
@@ -3269,6 +3282,15 @@ namespace SparkVenture.Migrations
                     b.HasOne("SparkVenture.Data.Models.Document", null)
                         .WithOne()
                         .HasForeignKey("SparkVenture.Models.DocumentContent", "DocumentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SparkVenture.Models.RegistrationFinancialYearEnd", b =>
+                {
+                    b.HasOne("SparkVenture.Data.Models.RegistrationApplication", null)
+                        .WithOne()
+                        .HasForeignKey("SparkVenture.Models.RegistrationFinancialYearEnd", "RegistrationApplicationId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

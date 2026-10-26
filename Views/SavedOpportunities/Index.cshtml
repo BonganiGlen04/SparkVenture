@@ -1,0 +1,41 @@
+@model SparkVenture.ViewModels.SavedOpportunitiesIndexVm
+@{
+    ViewData["Title"] = "Saved Opportunities";
+    Layout = "_DashboardLayout";
+}
+<a asp-controller="Opportunities" asp-action="Index" asp-route-businessId="@Model.BusinessId" class="text-sm font-bold text-blue-600">← Browse opportunities</a>
+<h1 class="mb-2 mt-5 text-3xl font-extrabold text-blue-950">Saved opportunities</h1>
+<p class="mb-6 text-sm text-slate-600">Keep notes for @Model.BusinessName and revisit deadlines.</p>
+<div class="space-y-4">
+    @foreach (var item in Model.Items)
+    {
+        <article class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+            <div class="flex flex-wrap items-start justify-between gap-2"><div><h2 class="text-lg font-bold text-blue-950">@item.Opportunity.Title</h2>
+                <p class="mt-1 text-xs text-slate-500">@item.Opportunity.Type · Closing @(item.Opportunity.ClosesAtUtc?.ToString("dd MMM yyyy") ?? "unspecified")</p></div>
+                @if (item.Opportunity.IsDemo) { <span class="rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-900">Demo</span> }
+            </div>
+            @if (Model.CanManage)
+            {
+                <form method="post" asp-action="UpdateNotes" class="mt-4 flex flex-col gap-2 sm:flex-row">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                    <input type="hidden" name="savedOpportunityId" value="@item.SavedOpportunityId" />
+                    <input name="notes" maxlength="350" value="@item.Notes" placeholder="Your next action or follow-up..." class="w-full flex-1 rounded-xl border border-blue-200 px-3 py-2 text-sm" />
+                    <button type="submit" class="rounded-xl border border-blue-200 px-3 py-2 text-sm font-bold text-blue-700">Save note</button>
+                </form>
+            }
+            else if (!string.IsNullOrWhiteSpace(item.Notes)) { <p class="mt-3 text-sm text-slate-600">@item.Notes</p> }
+            <div class="mt-4 flex flex-wrap gap-2">
+                <a asp-controller="Opportunities" asp-action="Details" asp-route-businessId="@Model.BusinessId" asp-route-id="@item.Opportunity.OpportunityId" class="rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white">Details</a>
+                @if (Model.CanManage)
+                { <form method="post" asp-action="Remove" onsubmit="return confirm('Remove this saved opportunity?');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="businessId" value="@Model.BusinessId" />
+                    <input type="hidden" name="savedOpportunityId" value="@item.SavedOpportunityId" />
+                    <button type="submit" class="rounded-xl border border-red-200 px-3 py-2 text-xs font-bold text-red-700">Unsave</button>
+                </form> }
+            </div>
+        </article>
+    }
+    @if (Model.Items.Count == 0) { <div class="rounded-2xl bg-white p-10 text-center text-slate-600">Nothing saved yet. Browse opportunities to build your shortlist.</div> }
+</div>
